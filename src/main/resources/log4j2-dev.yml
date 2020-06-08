@@ -1,0 +1,28 @@
+Configuration:
+  status: warn
+  monitorInterval: 300
+
+  properties:
+    property:
+      - name: pattern
+        value: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%logger{36}.%t:%L] - %msg%n"
+
+  Appenders:
+    Console:
+      name: STDOUT
+      PatternLayout:
+        pattern: ${pattern}
+
+  Loggers:
+    Logger:
+      name: com.kangyonggan.gitlab.mapper
+      level: debug
+      additivity: false
+      AppenderRef:
+        - ref: STDOUT
+
+    Root:
+      level: info
+      additivity: true
+      AppenderRef:
+        - ref: STDOUT

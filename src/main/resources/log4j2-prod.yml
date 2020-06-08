@@ -1,0 +1,66 @@
+Configuration:
+  status: warn
+  monitorInterval: 300
+
+  properties:
+    property:
+      - name: pattern
+        value: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%logger{36}.%t:%L] <%X{uuid}> - %maxLen{%m}{1500}%n"
+      - name: path
+        value: /home/ubuntu/data/gitlab/logs
+
+  Appenders:
+    RollingFile:
+      - name: AllFile
+        fileName: ${path}/all.log
+        filePattern: "${path}/archive/$${date:yyyy-MM}/all-%d{yyyy-MM-dd}-%i.log.gz"
+        PatternLayout:
+          pattern: ${pattern}
+        Filters:
+          ThresholdFilter:
+            - level: fatal
+              onMatch: DENY
+              onMismatch: NEUTRAL
+            - level: debug
+              onMatch: ACCEPT
+              onMismatch: DENY
+        Policies:
+          TimeBasedTriggeringPolicy:
+            interval: 1
+          SizeBasedTriggeringPolicy:
+            size: "500 MB"
+
+      - name: ErrorFile
+        fileName: ${path}/error.log
+        filePattern: "${path}/archive/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log.gz"
+        PatternLayout:
+          pattern: ${pattern}
+        Filters:
+          ThresholdFilter:
+            - level: fatal
+              onMatch: DENY
+              onMismatch: NEUTRAL
+            - level: error
+              onMatch: ACCEPT
+              onMismatch: DENY
+        Policies:
+          TimeBasedTriggeringPolicy:
+            interval: 1
+          SizeBasedTriggeringPolicy:
+            size: "500 MB"
+
+  Loggers:
+    Logger:
+      name: com.kangyonggan.gitlab.mapper
+      level: debug
+      additivity: false
+      AppenderRef:
+        - ref: AllFile
+        - ref: ErrorFile
+
+    Root:
+      level: info
+      additivity: true
+      AppenderRef:
+        - ref: AllFile
+        - ref: ErrorFile

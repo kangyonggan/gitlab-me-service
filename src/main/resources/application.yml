@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: @env@
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+
+logging:
+  config: classpath:log4j2-@env@.yml
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+app:
+  name: GitLab ME

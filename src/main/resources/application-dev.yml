@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/gitlabdb?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    username: root
+    password: 123456
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+app:
+  file-upload: @uploadPath@/data/gitlab/upload/
+  email:
+    host: smtp.exmail.qq.com
+    port: 465
+    username: java@kangyonggan.com
+    password: 5uUPwTKTFCqtxDGf
+    expires-in: 10
