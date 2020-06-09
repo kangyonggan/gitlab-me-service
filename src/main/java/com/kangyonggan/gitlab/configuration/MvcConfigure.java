@@ -1,6 +1,7 @@
 package com.kangyonggan.gitlab.configuration;
 
 import com.kangyonggan.gitlab.constants.AppConstants;
+import com.kangyonggan.gitlab.interceptor.ParamsInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -32,6 +33,8 @@ public class MvcConfigure implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 处理请求
+        registry.addInterceptor(new ParamsInterceptor()).addPathPatterns("/**");
     }
 
     /**

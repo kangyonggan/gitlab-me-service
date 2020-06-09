@@ -14,7 +14,7 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/gitlabdb?nullCatalogMeansCurrent=true"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/gitlab?nullCatalogMeansCurrent=true"
                         userId="root" password="o09iu87y"/>
 
         <!--TableName.java-->
@@ -36,7 +36,7 @@
         </javaClientGenerator>
 
         <!--table name-->
-        <table tableName="tb_table_name" domainObjectName="TableName">
+        <table tableName="table_name">
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
     </context>
