@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * @author kyg
@@ -17,18 +16,6 @@ public final class DateUtil {
     private static ZoneId zoneId = ZoneId.systemDefault();
 
     private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-    private static SimpleDateFormat chinaFormatter = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT+0800' (中国标准时间)", Locale.ENGLISH);
-
-    /**
-     * 中国标准时间
-     *
-     * @param date
-     * @return
-     */
-    public static String toChina(Date date) {
-        return chinaFormatter.format(date);
-    }
 
     /**
      * 日期解析
