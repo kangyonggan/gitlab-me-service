@@ -1,6 +1,7 @@
 package com.kangyonggan.gitlab.configuration;
 
 import com.kangyonggan.gitlab.constants.AppConstants;
+import com.kangyonggan.gitlab.interceptor.AuthInterceptor;
 import com.kangyonggan.gitlab.interceptor.ParamsInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,8 @@ public class MvcConfigure implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 处理请求
         registry.addInterceptor(new ParamsInterceptor()).addPathPatterns("/**");
+        // 权限认证
+        registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/**");
     }
 
     /**

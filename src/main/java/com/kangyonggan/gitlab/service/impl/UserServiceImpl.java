@@ -52,6 +52,25 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         baseMapper.insertSelective(user);
     }
 
+    @Override
+    @MethodLog
+    public User findUserByUsernameOrEmail(String username) {
+        User user = new User();
+        if (username.contains("@")) {
+            user.setEmail(username);
+            return baseMapper.selectOne(user);
+        }
+
+        user.setUsername(username);
+        return baseMapper.selectOne(user);
+    }
+
+    @Override
+    @MethodLog
+    public void updateUser(User user) {
+        baseMapper.updateByPrimaryKeySelective(user);
+    }
+
     /**
      * 设定安全的密码，生成随机的salt并经过N次 sha-1 hash
      *

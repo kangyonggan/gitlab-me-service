@@ -51,6 +51,25 @@ CREATE UNIQUE INDEX username_UNIQUE
 CREATE UNIQUE INDEX email_UNIQUE
     ON user (email);
 
+-- ----------------------------
+--  Table structure for sign_in_log
+-- ----------------------------
+DROP TABLE
+    IF EXISTS sign_in_log;
+
+CREATE TABLE sign_in_log
+(
+    id           BIGINT(20) PRIMARY KEY AUTO_INCREMENT NOT NULL
+        COMMENT 'ID',
+    user_id      BIGINT(20)                            NOT NULL
+        COMMENT '用户ID',
+    sign_in_ip   VARCHAR(20)                           NOT NULL
+        COMMENT '登录IP',
+    sign_in_time TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT '登录时间'
+)
+    COMMENT '登录日志表';
+
 #====================初始数据====================#
 
 -- ----------------------------

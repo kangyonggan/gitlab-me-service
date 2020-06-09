@@ -29,4 +29,19 @@ public interface UserService {
      * @param user
      */
     void saveUser(User user);
+
+    /**
+     * 根据用户名或者邮箱查找用户
+     *
+     * @param username
+     * @return
+     */
+    User findUserByUsernameOrEmail(String username);
+
+    /**
+     * 更新用户
+     *
+     * @param user
+     */
+    void updateUser(User user);
 }
