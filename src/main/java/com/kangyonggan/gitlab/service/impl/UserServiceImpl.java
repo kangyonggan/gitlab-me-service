@@ -19,6 +19,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
+    public boolean existsUsername(String username) {
+        User user = new User();
+        user.setUsername(username);
+        return baseMapper.selectCount(user) > 0;
+    }
+
+    @Override
+    public boolean existsEmail(String email) {
+        User user = new User();
+        user.setEmail(email);
+        return baseMapper.selectCount(user) > 0;
+    }
+
+    @Override
     @MethodLog
     @Transactional(rollbackFor = Exception.class)
     public void saveUser(User user) {
@@ -29,8 +43,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setAccessLevel(AccessLevel.Regular.getCode());
         user.setAvatar(null);
 
-        user.setLastLoginIp(null);
-        user.setLastLoginTime(null);
+        user.setLastSignInIp(null);
+        user.setLastSignInTime(null);
         user.setIsDeleted(YesNo.NO.getCode());
         user.setCreatedTime(null);
         user.setUpdatedTime(null);

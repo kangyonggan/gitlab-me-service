@@ -11,22 +11,22 @@ public enum Resp {
     /**
      * 操作成功
      */
-    SUCCESS("0000", "成功"),
+    SUCCESS("0000", "success"),
 
     /**
      * 权限不足
      */
-    PERMISSION_DENIED("9997", "您无权访问所请求的资源！"),
+    PERMISSION_DENIED("9997", "You do not have access to the requested resource"),
 
     /**
      * 登录已失效
      */
-    INVALID_LOGIN("9998", "您尚未登录或登录已失效！"),
+    INVALID_LOGIN("9998", "You are not sign in or expired"),
 
     /**
      * 未知错误
      */
-    FAILURE("9999", "未知错误，请联系管理员！");
+    FAILURE("9999", "Unknown error, please contact the administrator");
 
     /**
      * 响应码

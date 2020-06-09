@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
  * @author kyg
  */
 @RestController
-@RequestMapping("/")
+@RequestMapping("users")
 @Log4j2
-public class LoginController extends BaseController {
+public class UsersController extends BaseController {
 
     @Autowired
     private UserService userService;
@@ -26,9 +26,9 @@ public class LoginController extends BaseController {
      * @param user
      * @return
      */
-    @PostMapping("register")
-    public Response register(User user) {
-        user.setRegisterIp(getIpAddress());
+    @PostMapping("signUp")
+    public Response signUp(User user) {
+        user.setSignUpIp(getIpAddress());
         userService.saveUser(user);
 
         return successResponse();

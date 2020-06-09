@@ -23,7 +23,7 @@ public class User implements Serializable {
     private String username;
 
     /**
-     * 姓名
+     * 全名
      */
     @Column(name = "full_name")
     private String fullName;
@@ -46,14 +46,14 @@ public class User implements Serializable {
     /**
      * 注册IP
      */
-    @Column(name = "register_ip")
-    private String registerIp;
+    @Column(name = "sign_up_ip")
+    private String signUpIp;
 
     /**
      * 注册时间
      */
-    @Column(name = "register_time")
-    private Date registerTime;
+    @Column(name = "sign_up_time")
+    private Date signUpTime;
 
     /**
      * 项目限定
@@ -81,14 +81,14 @@ public class User implements Serializable {
     /**
      * 最后登录IP
      */
-    @Column(name = "last_login_ip")
-    private String lastLoginIp;
+    @Column(name = "last_sign_in_ip")
+    private String lastSignInIp;
 
     /**
      * 最后登录时间
      */
-    @Column(name = "last_login_time")
-    private Date lastLoginTime;
+    @Column(name = "last_sign_in_time")
+    private Date lastSignInTime;
 
     /**
      * 逻辑删除

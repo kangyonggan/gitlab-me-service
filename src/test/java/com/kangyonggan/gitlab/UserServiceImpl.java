@@ -22,7 +22,7 @@ public class UserServiceImpl extends AbstractTest {
         user.setPassword("11111111");
         user.setEmail("java@kangyonggan.com");
 
-        user.setRegisterIp("127.0.0.1");
+        user.setSignUpIp("127.0.0.1");
 
         userService.saveUser(user);
     }
