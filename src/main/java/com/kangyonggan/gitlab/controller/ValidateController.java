@@ -52,4 +52,21 @@ public class ValidateController extends BaseController {
         return response;
     }
 
+    /**
+     * 校验电子邮箱是否不存在
+     *
+     * @param email
+     * @return
+     */
+    @GetMapping("emailNotExists")
+    public Response emailNotExists(@RequestParam String email) {
+        Response response = successResponse();
+
+        if (!userService.existsEmail(email)) {
+            response.failure("The email not exists");
+        }
+
+        return response;
+    }
+
 }

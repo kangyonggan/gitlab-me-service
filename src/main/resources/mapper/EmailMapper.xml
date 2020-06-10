@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kangyonggan.gitlab.mapper.EmailMapper">
+    <resultMap id="BaseResultMap" type="com.kangyonggan.gitlab.model.Email">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="template_code" jdbcType="VARCHAR" property="templateCode" />
+        <result column="template_name" jdbcType="VARCHAR" property="templateName" />
+        <result column="subject" jdbcType="VARCHAR" property="subject" />
+        <result column="from_email" jdbcType="VARCHAR" property="fromEmail" />
+        <result column="to_email" jdbcType="VARCHAR" property="toEmail" />
+        <result column="params" jdbcType="VARCHAR" property="params" />
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+        <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    </resultMap>
+</mapper>

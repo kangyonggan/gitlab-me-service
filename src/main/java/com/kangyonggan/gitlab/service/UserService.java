@@ -44,4 +44,21 @@ public interface UserService {
      * @param user
      */
     void updateUser(User user);
+
+    /**
+     * 发重置密码邮件
+     *
+     * @param toEmail
+     * @return
+     * @throws Exception
+     */
+    Long sendResetPasswordEmail(String toEmail) throws Exception;
+
+    /**
+     * 重置密码
+     *
+     * @param email
+     * @param password
+     */
+    void resetPassword(String email, String password);
 }

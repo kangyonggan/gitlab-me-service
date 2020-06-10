@@ -26,4 +26,10 @@ public class UserServiceImpl extends AbstractTest {
 
         userService.saveUser(user);
     }
+
+    @Test
+    public void sendResetPasswordEmail() throws Exception {
+        userService.sendResetPasswordEmail("java@kangyonggan.com");
+    }
+
 }

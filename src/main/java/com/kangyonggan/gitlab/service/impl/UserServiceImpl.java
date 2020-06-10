@@ -1,22 +1,48 @@
 package com.kangyonggan.gitlab.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.kangyonggan.gitlab.annotation.MethodLog;
 import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.constants.AppConstants;
+import com.kangyonggan.gitlab.constants.EmailTemplateCode;
 import com.kangyonggan.gitlab.constants.YesNo;
+import com.kangyonggan.gitlab.model.Email;
+import com.kangyonggan.gitlab.model.EmailTemplate;
 import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.BaseService;
+import com.kangyonggan.gitlab.service.EmailService;
+import com.kangyonggan.gitlab.service.EmailTemplateService;
 import com.kangyonggan.gitlab.service.UserService;
 import com.kangyonggan.gitlab.util.Digests;
 import com.kangyonggan.gitlab.util.Encodes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+
+import java.util.UUID;
 
 /**
  * @author kyg
  */
 @Service
 public class UserServiceImpl extends BaseService<User> implements UserService {
+
+    @Autowired
+    private EmailTemplateService emailTemplateService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Value("${app.email.username}")
+    private String username;
+
+    @Value("${app.email.expires-in}")
+    private String expiresIn;
+
+    @Value("${app.name}")
+    private String appName;
 
     @Override
     public boolean existsUsername(String username) {
@@ -69,6 +95,42 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @MethodLog
     public void updateUser(User user) {
         baseMapper.updateByPrimaryKeySelective(user);
+    }
+
+    @Override
+    @MethodLog
+    public Long sendResetPasswordEmail(String toEmail) throws Exception {
+        EmailTemplate emailTemplate = emailTemplateService.findEmailTemplateByCode(EmailTemplateCode.RESET_PASSWORD.getCode());
+
+        Email email = new Email();
+        email.setTemplateCode(emailTemplate.getCode());
+        email.setTemplateName(emailTemplate.getName());
+
+        String verifyCode = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 4);
+        JSONObject params = new JSONObject();
+        params.put("verifyCode", verifyCode);
+        params.put("expiresIn", expiresIn);
+
+        email.setToEmail(toEmail);
+        email.setFromEmail(username);
+        email.setParams(params.toJSONString());
+        email.setSubject("【" + appName + "】" + emailTemplate.getName());
+        email.setContent("【" + appName + "】" + String.format(emailTemplate.getTemplate(), verifyCode, expiresIn));
+
+        emailService.send(email);
+        return email.getId();
+    }
+
+    @Override
+    @MethodLog
+    public void resetPassword(String email, String password) {
+        User user = new User();
+        user.setPassword(password);
+        entryptPassword(user);
+
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("email", email);
+        baseMapper.updateByExampleSelective(user, example);
     }
 
     /**

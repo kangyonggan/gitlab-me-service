@@ -70,13 +70,83 @@ CREATE TABLE sign_in_log
 )
     COMMENT '登录日志表';
 
+-- ----------------------------
+--  Table structure for email_template
+-- ----------------------------
+DROP TABLE
+    IF EXISTS email_template;
+
+CREATE TABLE email_template
+(
+    id           BIGINT(20) PRIMARY KEY AUTO_INCREMENT NOT NULL
+        COMMENT 'ID',
+    code         VARCHAR(64)                           NOT NULL
+        COMMENT '模板代码',
+    name         VARCHAR(64)                           NOT NULL
+        COMMENT '模板名称',
+    template     LONGTEXT
+        COMMENT '邮件模板',
+    is_deleted   TINYINT                               NOT NULL DEFAULT 0
+        COMMENT '逻辑删除',
+    created_time TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+    updated_time TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        COMMENT '更新时间'
+)
+    COMMENT '邮件模板表';
+CREATE UNIQUE INDEX code_UNIQUE
+    ON email_template (code);
+
+-- ----------------------------
+--  Table structure for email
+-- ----------------------------
+DROP TABLE
+    IF EXISTS email;
+
+CREATE TABLE email
+(
+    id            BIGINT(20) PRIMARY KEY AUTO_INCREMENT NOT NULL
+        COMMENT 'ID',
+    template_code VARCHAR(64)                           NOT NULL
+        COMMENT '模板代码',
+    template_name VARCHAR(128)                          NOT NULL
+        COMMENT '模板名称',
+    subject       VARCHAR(128)                          NOT NULL DEFAULT ''
+        COMMENT '标题',
+    from_email    VARCHAR(128)                          NOT NULL DEFAULT ''
+        COMMENT '发送方',
+    to_email      VARCHAR(128)                          NOT NULL DEFAULT ''
+        COMMENT '接收方',
+    params        VARCHAR(1024)                         NOT NULL DEFAULT ''
+        COMMENT '参数',
+    content       LONGTEXT
+        COMMENT '邮件内容',
+    is_deleted    TINYINT                               NOT NULL DEFAULT 0
+        COMMENT '逻辑删除',
+    created_time  TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+    updated_time  TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        COMMENT '更新时间'
+)
+    COMMENT '邮件表';
+CREATE INDEX ix_template_code
+    ON email (template_code);
+
 #====================初始数据====================#
 
 -- ----------------------------
---  data for tb_user
+--  data for user
 -- ----------------------------
 INSERT INTO user
-(id, username, full_name, email, password, salt, sign_up_ip, projects_limit, can_create_group, access_level)
+(username, full_name, email, password, salt, sign_up_ip, projects_limit, can_create_group, access_level)
 -- password: root2020
-VALUES (1, 'root', '管理员', 'root@kangyonggan.com', 'f30fd033ee440ce9d47248531379b97526b3dfc8', 'fdee074755d53471',
+VALUES ('root', '管理员', 'root@kangyonggan.com', 'f30fd033ee440ce9d47248531379b97526b3dfc8', 'fdee074755d53471',
         '127.0.0.1', 100, 1, 'Admin');
+
+-- ----------------------------
+--  data for email_template
+-- ----------------------------
+INSERT INTO email_template
+    (code, name, template)
+VALUES ('reset_password', 'Reset password', 'Reset password verification code is %s, expire in %s minutes.');
+
