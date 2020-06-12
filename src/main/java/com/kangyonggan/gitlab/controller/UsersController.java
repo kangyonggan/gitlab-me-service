@@ -57,10 +57,11 @@ public class UsersController extends BaseController {
      *
      * @param username
      * @param password
+     * @param rememberMe
      * @return
      */
     @PostMapping("signIn")
-    public Response signIn(@RequestParam String username, @RequestParam String password) {
+    public Response signIn(@RequestParam String username, @RequestParam String password, @RequestParam int rememberMe) {
         Response response = successResponse();
 
         User dbUser = userService.findUserByUsernameOrEmail(username);
@@ -92,6 +93,12 @@ public class UsersController extends BaseController {
 
         // 保存登录日志
         saveAccessLog.saveSignInLog(dbUser.getId(), getIpAddress());
+
+        // Remember me
+        if (rememberMe == 1) {
+            // 77776000秒 = 90天
+            ParamsInterceptor.getSession().setMaxInactiveInterval(77776000);
+        }
 
         response.put("user", dbUser);
         return response;
