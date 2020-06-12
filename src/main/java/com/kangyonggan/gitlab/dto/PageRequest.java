@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class PageRequest extends Request {
 
+    public static final String ASC = "ascending";
+    public static final String DESC = "descending";
+
     /**
      * 当前页
      */
@@ -24,7 +27,7 @@ public class PageRequest extends Request {
     private String prop;
 
     /**
-     * 排序顺序(asc: 升序，desc：降序)
+     * 排序顺序(ascending: 升序，descending：降序)
      */
     private String order;
 

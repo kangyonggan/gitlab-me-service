@@ -2,10 +2,10 @@ package com.kangyonggan.gitlab.interceptor;
 
 import com.kangyonggan.gitlab.annotation.PermissionAccessLevel;
 import com.kangyonggan.gitlab.annotation.PermissionLogin;
+import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.constants.AppConstants;
 import com.kangyonggan.gitlab.constants.Resp;
 import com.kangyonggan.gitlab.dto.Response;
-import com.kangyonggan.gitlab.model.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -57,8 +57,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
 
-            User user = ParamsInterceptor.getUser();
-            if (!Arrays.asList(permissionAccessLevel.value()).contains(user.getAccessLevel())) {
+            AccessLevel accessLevel = AccessLevel.getAccessLevelByCode(ParamsInterceptor.getUser().getAccessLevel());
+            if (!Arrays.asList(permissionAccessLevel.value()).contains(accessLevel)) {
                 // 9997: 权限不足
                 writePermissionDeniedResponse(response);
                 return false;

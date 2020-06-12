@@ -35,4 +35,15 @@ public enum AccessLevel {
         this.code = code;
         this.name = name;
     }
+
+    public static AccessLevel getAccessLevelByCode(String code) {
+        AccessLevel[] values = AccessLevel.values();
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].code.equals(code)) {
+                return values[i];
+            }
+        }
+
+        return null;
+    }
 }

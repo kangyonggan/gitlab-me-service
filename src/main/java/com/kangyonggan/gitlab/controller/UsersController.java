@@ -2,6 +2,7 @@ package com.kangyonggan.gitlab.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.kangyonggan.gitlab.annotation.PermissionLogin;
+import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.constants.AppConstants;
 import com.kangyonggan.gitlab.constants.YesNo;
 import com.kangyonggan.gitlab.dto.Response;
@@ -47,6 +48,10 @@ public class UsersController extends BaseController {
     @PostMapping("signUp")
     public Response signUp(User user) {
         user.setSignUpIp(getIpAddress());
+        user.setProjectsLimit(0);
+        user.setCanCreateGroup(YesNo.NO.getCode());
+        user.setAccessLevel(AccessLevel.Regular.getCode());
+        user.setAvatar(null);
         userService.saveUser(user);
 
         return successResponse();

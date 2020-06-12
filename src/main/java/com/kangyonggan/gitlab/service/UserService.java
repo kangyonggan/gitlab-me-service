@@ -1,6 +1,9 @@
 package com.kangyonggan.gitlab.service;
 
+import com.kangyonggan.gitlab.dto.UserRequest;
 import com.kangyonggan.gitlab.model.User;
+
+import java.util.List;
 
 /**
  * @author kyg
@@ -61,4 +64,20 @@ public interface UserService {
      * @param password
      */
     void resetPassword(String email, String password);
+
+    /**
+     * 搜索用户
+     *
+     * @param request
+     * @return
+     */
+    List<User> searchUsers(UserRequest request);
+
+    /**
+     * 更新密码
+     *
+     * @param userId
+     * @param password
+     */
+    void updateUserPassword(Long userId, String password);
 }

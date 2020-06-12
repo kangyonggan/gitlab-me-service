@@ -2,10 +2,10 @@ package com.kangyonggan.gitlab.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.kangyonggan.gitlab.annotation.MethodLog;
-import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.constants.AppConstants;
 import com.kangyonggan.gitlab.constants.EmailTemplateCode;
 import com.kangyonggan.gitlab.constants.YesNo;
+import com.kangyonggan.gitlab.dto.UserRequest;
 import com.kangyonggan.gitlab.model.Email;
 import com.kangyonggan.gitlab.model.EmailTemplate;
 import com.kangyonggan.gitlab.model.User;
@@ -15,12 +15,15 @@ import com.kangyonggan.gitlab.service.EmailTemplateService;
 import com.kangyonggan.gitlab.service.UserService;
 import com.kangyonggan.gitlab.util.Digests;
 import com.kangyonggan.gitlab.util.Encodes;
+import com.kangyonggan.gitlab.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -63,11 +66,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void saveUser(User user) {
         entryptPassword(user);
-
-        user.setProjectsLimit(0);
-        user.setCanCreateGroup(YesNo.NO.getCode());
-        user.setAccessLevel(AccessLevel.Regular.getCode());
-        user.setAvatar(null);
 
         user.setLastSignInIp(null);
         user.setLastSignInTime(null);
@@ -131,6 +129,40 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("email", email);
         baseMapper.updateByExampleSelective(user, example);
+    }
+
+    @Override
+    public List<User> searchUsers(UserRequest request) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        String username = request.getUsername();
+        if (StringUtils.isNotEmpty(username)) {
+            criteria.andLike("username", StringUtil.toLike(username));
+        }
+
+        String email = request.getEmail();
+        if (StringUtils.isNotEmpty(email)) {
+            criteria.andLike("email", StringUtil.toLike(email));
+        }
+
+        String fullName = request.getFullName();
+        if (StringUtils.isNotEmpty(fullName)) {
+            criteria.andLike("fullName", StringUtil.toLike(fullName));
+        }
+
+        sortAndPage(request, example);
+        return baseMapper.selectByExample(example);
+    }
+
+    @Override
+    @MethodLog
+    public void updateUserPassword(Long userId, String password) {
+        User user = new User();
+        user.setId(userId);
+        user.setPassword(password);
+        entryptPassword(user);
+        baseMapper.updateByPrimaryKeySelective(user);
     }
 
     /**

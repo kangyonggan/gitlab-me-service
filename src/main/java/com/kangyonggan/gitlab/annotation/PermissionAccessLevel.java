@@ -1,5 +1,7 @@
 package com.kangyonggan.gitlab.annotation;
 
+import com.kangyonggan.gitlab.constants.AccessLevel;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,5 +21,5 @@ public @interface PermissionAccessLevel {
      *
      * @return
      */
-    String[] value();
+    AccessLevel[] value();
 }
