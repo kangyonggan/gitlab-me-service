@@ -61,7 +61,8 @@ public class UsersController extends BaseController {
      * @return
      */
     @PostMapping("signIn")
-    public Response signIn(@RequestParam String username, @RequestParam String password, @RequestParam int rememberMe) {
+    public Response signIn(@RequestParam String username, @RequestParam String password,
+                           @RequestParam(required = false, defaultValue = "0") int rememberMe) {
         Response response = successResponse();
 
         User dbUser = userService.findUserByUsernameOrEmail(username);
