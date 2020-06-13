@@ -58,6 +58,20 @@ public class ManageUsersController extends BaseController {
     }
 
     /**
+     * 查询用户
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("{id:[\\d]+}")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response detail(@PathVariable Long id) {
+        Response response = successResponse();
+        response.put("user", userService.getUser(id));
+        return response;
+    }
+
+    /**
      * 更新用户
      *
      * @param user
@@ -90,16 +104,16 @@ public class ManageUsersController extends BaseController {
     }
 
     /**
-     * 更新密码
+     * 物理删除
      *
-     * @param userId
-     * @param password
+     * @param id
      * @return
      */
-    @PutMapping("{userId:[\\d]+}/password")
+    @DeleteMapping("{id:[\\d]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response updatePassword(@PathVariable Long userId, String password) {
-        userService.updateUserPassword(userId, password);
+    public Response delete(@PathVariable Long id) {
+        userService.removeUser(id);
+
         return successResponse();
     }
 

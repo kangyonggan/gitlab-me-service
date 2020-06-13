@@ -140,7 +140,7 @@ CREATE INDEX ix_template_code
 INSERT INTO user
 (username, full_name, email, password, salt, sign_up_ip, projects_limit, can_create_group, access_level)
 -- password: root2020
-VALUES ('root', '管理员', 'root@kangyonggan.com', 'f30fd033ee440ce9d47248531379b97526b3dfc8', 'fdee074755d53471',
+VALUES ('root', 'Administrator', 'root@kangyonggan.com', 'f30fd033ee440ce9d47248531379b97526b3dfc8', 'fdee074755d53471',
         '127.0.0.1', 100, 1, 'Admin');
 
 -- ----------------------------

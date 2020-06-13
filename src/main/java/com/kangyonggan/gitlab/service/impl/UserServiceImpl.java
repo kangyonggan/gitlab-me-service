@@ -92,6 +92,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     @MethodLog
     public void updateUser(User user) {
+        if (StringUtils.isNotEmpty(user.getPassword()) && StringUtils.isEmpty(user.getSalt())) {
+            entryptPassword(user);
+        } else {
+            user.setPassword(null);
+            user.setSalt(null);
+        }
         baseMapper.updateByPrimaryKeySelective(user);
     }
 
@@ -157,12 +163,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
     @MethodLog
-    public void updateUserPassword(Long userId, String password) {
-        User user = new User();
-        user.setId(userId);
-        user.setPassword(password);
-        entryptPassword(user);
-        baseMapper.updateByPrimaryKeySelective(user);
+    public User getUser(Long id) {
+        return baseMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    @MethodLog
+    public void removeUser(Long id) {
+        baseMapper.deleteByPrimaryKey(id);
     }
 
     /**

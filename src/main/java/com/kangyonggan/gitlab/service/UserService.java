@@ -74,10 +74,17 @@ public interface UserService {
     List<User> searchUsers(UserRequest request);
 
     /**
-     * 更新密码
+     * 查询用户
      *
-     * @param userId
-     * @param password
+     * @param id
+     * @return
      */
-    void updateUserPassword(Long userId, String password);
+    User getUser(Long id);
+
+    /**
+     * 删除用户
+     *
+     * @param id
+     */
+    void removeUser(Long id);
 }
