@@ -18,7 +18,7 @@ import java.util.List;
  * @author kyg
  */
 @RestController
-@RequestMapping("admin/manage/users")
+@RequestMapping("admin/users")
 public class ManageUsersController extends BaseController {
 
     @Autowired
