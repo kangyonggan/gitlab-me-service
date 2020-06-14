@@ -29,4 +29,9 @@ public interface AppConstants {
      * 用户在session中的key
      */
     String KEY_SESSION_USER = "key-session-user";
+
+    /**
+     * 保留字
+     */
+    String RESERVED_WORDS = "admin,users,profile,404";
 }

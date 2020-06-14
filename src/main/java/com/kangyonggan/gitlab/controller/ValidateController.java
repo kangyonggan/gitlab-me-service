@@ -1,5 +1,6 @@
 package com.kangyonggan.gitlab.controller;
 
+import com.kangyonggan.gitlab.constants.AppConstants;
 import com.kangyonggan.gitlab.dto.Response;
 import com.kangyonggan.gitlab.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,23 @@ public class ValidateController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * 校验是否是保留字
+     *
+     * @param word
+     * @return
+     */
+    @GetMapping("reserved")
+    public Response reserved(@RequestParam String word) {
+        Response response = successResponse();
+
+        if (AppConstants.RESERVED_WORDS.contains(word)) {
+            response.failure(word + " is a reserved name");
+        }
+
+        return response;
+    }
 
     /**
      * 校验用户名是否存在
