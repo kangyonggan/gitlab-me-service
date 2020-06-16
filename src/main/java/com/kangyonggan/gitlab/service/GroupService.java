@@ -28,14 +28,6 @@ public interface GroupService {
     Group saveGroup(Group group, Long userId);
 
     /**
-     * 查询组
-     *
-     * @param id
-     * @return
-     */
-    Group getGroup(Long id);
-
-    /**
      * 更新组
      *
      * @param group
@@ -56,4 +48,12 @@ public interface GroupService {
      * @return
      */
     boolean existsGroupPath(String groupPath);
+
+    /**
+     * 查询组
+     *
+     * @param groupPath
+     * @return
+     */
+    Group findGroupByPath(String groupPath);
 }

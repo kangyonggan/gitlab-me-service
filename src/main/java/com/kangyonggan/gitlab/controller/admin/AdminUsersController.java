@@ -67,23 +67,25 @@ public class AdminUsersController extends BaseController {
     @PostMapping
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response save(User user) {
+        Response response = successResponse();
         user.setSignUpIp(getIpAddress());
         userService.saveUser(user);
 
-        return successResponse();
+        response.put("user", user);
+        return response;
     }
 
     /**
      * 查询用户
      *
-     * @param id
+     * @param username
      * @return
      */
-    @GetMapping("{id:[\\d]+}")
+    @GetMapping("{username:[\\w]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response detail(@PathVariable Long id) {
+    public Response detail(@PathVariable String username) {
         Response response = successResponse();
-        response.put("user", userService.getUser(id));
+        response.put("user", userService.findUserByUsernameOrEmail(username));
         return response;
     }
 
@@ -96,9 +98,11 @@ public class AdminUsersController extends BaseController {
     @PutMapping
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response update(User user) {
+        Response response = successResponse();
         userService.updateUser(user);
 
-        return successResponse();
+        response.put("user", userService.getUser(user.getId()));
+        return response;
     }
 
     /**

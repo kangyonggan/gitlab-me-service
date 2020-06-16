@@ -61,11 +61,6 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
     }
 
     @Override
-    public Group getGroup(Long id) {
-        return baseMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateGroup(Group group) {
         baseMapper.updateByPrimaryKeySelective(group);
@@ -88,5 +83,13 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
         Group group = new Group();
         group.setGroupPath(groupPath);
         return baseMapper.selectCount(group) > 0;
+    }
+
+    @Override
+    @MethodLog
+    public Group findGroupByPath(String groupPath) {
+        Group group = new Group();
+        group.setGroupPath(groupPath);
+        return baseMapper.selectOne(group);
     }
 }

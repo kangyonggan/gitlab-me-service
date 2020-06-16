@@ -34,6 +34,7 @@ public class GroupUser implements Serializable {
     /**
      * 权限
      */
+    @Column(name = "access")
     private byte access;
 
     /**

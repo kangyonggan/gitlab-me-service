@@ -66,14 +66,14 @@ public class AdminGroupsController extends BaseController {
     /**
      * 查询组
      *
-     * @param id
+     * @param groupPath
      * @return
      */
-    @GetMapping("{id:[\\d]+}")
+    @GetMapping("{groupPath:[\\w]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response detail(@PathVariable Long id) {
+    public Response detail(@PathVariable String groupPath) {
         Response response = successResponse();
-        response.put("group", groupService.getGroup(id));
+        response.put("group", groupService.findGroupByPath(groupPath));
         return response;
     }
 
@@ -89,7 +89,7 @@ public class AdminGroupsController extends BaseController {
         Response response = successResponse();
 
         groupService.updateGroup(group);
-        response.put("group", groupService.getGroup(group.getId()));
+        response.put("group", groupService.findGroupByPath(group.getGroupPath()));
 
         return response;
     }

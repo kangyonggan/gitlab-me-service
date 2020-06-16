@@ -1,5 +1,8 @@
 package com.kangyonggan.gitlab.constants;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author kyg
  */
@@ -33,5 +36,6 @@ public interface AppConstants {
     /**
      * 保留字
      */
-    String RESERVED_WORDS = "admin,users,profile,404";
+    List<String> RESERVED_WORDS = Arrays.asList("admin", "users", "profile", "404");
+
 }

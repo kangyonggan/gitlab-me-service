@@ -22,8 +22,8 @@ public class GroupUserServiceImpl extends BaseService<GroupUser> implements Grou
 
     @Override
     @MethodLog
-    public void saveGroupUser(GroupUser access) {
-        baseMapper.insertSelective(access);
+    public void saveGroupUser(GroupUser groupUser) {
+        baseMapper.insertSelective(groupUser);
     }
 
     @Override

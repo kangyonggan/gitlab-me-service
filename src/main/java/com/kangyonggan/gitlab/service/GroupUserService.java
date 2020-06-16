@@ -12,9 +12,9 @@ public interface GroupUserService {
     /**
      * 保存组用户
      *
-     * @param access
+     * @param groupUser
      */
-    void saveGroupUser(GroupUser access);
+    void saveGroupUser(GroupUser groupUser);
 
     /**
      * 删除组用户
