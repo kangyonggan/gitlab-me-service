@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kangyonggan.gitlab.mapper.GroupMapper">
+    <resultMap id="BaseResultMap" type="com.kangyonggan.gitlab.model.Group">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="group_path" jdbcType="VARCHAR" property="groupPath" />
+        <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="group_avatar" jdbcType="VARCHAR" property="groupAvatar" />
+        <result column="visibility_level" jdbcType="TINYINT" property="visibilityLevel" />
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    </resultMap>
+</mapper>

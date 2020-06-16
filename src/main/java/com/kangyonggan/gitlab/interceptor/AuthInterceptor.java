@@ -57,7 +57,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
 
-            AccessLevel accessLevel = AccessLevel.getAccessLevelByCode(ParamsInterceptor.getUser().getAccessLevel());
+            AccessLevel accessLevel = AccessLevel.valueOf(ParamsInterceptor.getUser().getAccessLevel());
             if (!Arrays.asList(permissionAccessLevel.value()).contains(accessLevel)) {
                 // 9997: 权限不足
                 writePermissionDeniedResponse(response);

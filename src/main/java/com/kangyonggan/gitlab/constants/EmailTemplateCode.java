@@ -12,7 +12,7 @@ public enum EmailTemplateCode {
     /**
      * 重置密码
      */
-    RESET_PASSWORD("reset_password", "重置密码");
+    RESET_PASSWORD("reset_password");
 
     /**
      * 代码
@@ -20,14 +20,8 @@ public enum EmailTemplateCode {
     @Getter
     private final String code;
 
-    /**
-     * 名称
-     */
-    @Getter
-    private final String name;
 
-    EmailTemplateCode(String code, String name) {
+    EmailTemplateCode(String code) {
         this.code = code;
-        this.name = name;
     }
 }

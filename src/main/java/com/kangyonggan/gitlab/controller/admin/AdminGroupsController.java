@@ -4,61 +4,61 @@ import com.github.pagehelper.PageInfo;
 import com.kangyonggan.gitlab.annotation.PermissionAccessLevel;
 import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.controller.BaseController;
+import com.kangyonggan.gitlab.dto.GroupRequest;
 import com.kangyonggan.gitlab.dto.Response;
-import com.kangyonggan.gitlab.dto.UserRequest;
-import com.kangyonggan.gitlab.model.User;
-import com.kangyonggan.gitlab.service.UserService;
+import com.kangyonggan.gitlab.model.Group;
+import com.kangyonggan.gitlab.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 /**
  * @author kyg
  */
 @RestController
-@RequestMapping("admin/users")
-public class ManageUsersController extends BaseController {
+@RequestMapping("admin/groups")
+public class AdminGroupsController extends BaseController {
 
     @Autowired
-    private UserService userService;
+    private GroupService groupService;
 
     /**
-     * 用户列表查询
+     * 组列表查询
      *
      * @param request
      * @return
      */
     @GetMapping
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response list(UserRequest request) {
+    public Response list(GroupRequest request) {
         Response response = successResponse();
 
-        List<User> list = userService.searchUsers(request);
-        PageInfo<User> pageInfo = new PageInfo<>(list);
+        PageInfo<Group> pageInfo = new PageInfo<>(new ArrayList<>());
 
         response.put("pageInfo", pageInfo);
         return response;
     }
 
     /**
-     * 保存用户
+     * 保存组
      *
-     * @param user
+     * @param group
      * @return
      */
     @PostMapping
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response save(User user) {
-        user.setSignUpIp(getIpAddress());
-        userService.saveUser(user);
+    public Response save(Group group) {
+        Response response = successResponse();
+        group = groupService.saveGroup(group, currentUserId());
 
-        return successResponse();
+        response.put("group", group);
+        return response;
     }
 
     /**
-     * 查询用户
+     * 查询组
      *
      * @param id
      * @return
@@ -67,38 +67,20 @@ public class ManageUsersController extends BaseController {
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response detail(@PathVariable Long id) {
         Response response = successResponse();
-        response.put("user", userService.getUser(id));
+        response.put("group", groupService.getGroup(id));
         return response;
     }
 
     /**
-     * 更新用户
+     * 更新组
      *
-     * @param user
+     * @param group
      * @return
      */
     @PutMapping
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response update(User user) {
-        userService.updateUser(user);
-
-        return successResponse();
-    }
-
-    /**
-     * 删除/恢复用户
-     *
-     * @param id
-     * @param isDeleted
-     * @return
-     */
-    @PutMapping("{id:[\\d]+}/delete/{isDeleted:\\b0\\b|\\b1\\b}")
-    @PermissionAccessLevel(AccessLevel.Admin)
-    public Response delete(@PathVariable Long id, @PathVariable Byte isDeleted) {
-        User user = new User();
-        user.setId(id);
-        user.setIsDeleted(isDeleted);
-        userService.updateUser(user);
+    public Response update(Group group) {
+        groupService.updateGroup(group);
 
         return successResponse();
     }
@@ -112,7 +94,7 @@ public class ManageUsersController extends BaseController {
     @DeleteMapping("{id:[\\d]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response delete(@PathVariable Long id) {
-        userService.removeUser(id);
+        groupService.removeGroup(id);
 
         return successResponse();
     }

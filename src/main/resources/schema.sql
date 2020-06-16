@@ -132,6 +132,66 @@ CREATE TABLE email
 CREATE INDEX ix_template_code
     ON email (template_code);
 
+-- ----------------------------
+--  Table structure for group
+-- ----------------------------
+DROP TABLE
+    IF EXISTS `group`;
+
+CREATE TABLE `group`
+(
+    id               BIGINT(20) PRIMARY KEY AUTO_INCREMENT NOT NULL
+        COMMENT 'ID',
+    group_path       VARCHAR(20)                           NOT NULL
+        COMMENT '组路径',
+    group_name       VARCHAR(20)                           NOT NULL
+        COMMENT '组名称',
+    description      VARCHAR(256)                          NOT NULL DEFAULT ''
+        COMMENT '描述',
+    group_avatar     VARCHAR(64)                           NOT NULL
+        COMMENT '组头像',
+    visibility_level TINYINT                               NOT NULL
+        COMMENT '可见级别',
+    is_deleted       TINYINT                               NOT NULL DEFAULT 0
+        COMMENT '逻辑删除',
+    created_time     TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+    updated_time     TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        COMMENT '更新时间'
+)
+    COMMENT '组表';
+CREATE UNIQUE INDEX group_path_UNIQUE
+    ON `group` (group_path);
+
+-- ----------------------------
+--  Table structure for group_user_access
+-- ----------------------------
+DROP TABLE
+    IF EXISTS group_user_access;
+
+CREATE TABLE group_user_access
+(
+    id              BIGINT(20) PRIMARY KEY AUTO_INCREMENT NOT NULL
+        COMMENT 'ID',
+    group_id        BIGINT(20)                            NOT NULL
+        COMMENT '组ID',
+    user_id         BIGINT(20)                            NOT NULL
+        COMMENT '用户ID',
+    access          VARCHAR(20)                           NOT NULL
+        COMMENT '权限',
+    expiration_date DATE                                  NULL
+        COMMENT '失效日期',
+    created_time    TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+    updated_time    TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        COMMENT '更新时间'
+)
+    COMMENT '组用户权限表';
+CREATE INDEX ix_group
+    ON `group_user_access` (group_id);
+CREATE INDEX ix_user
+    ON `group_user_access` (user_id);
+
 #====================初始数据====================#
 
 -- ----------------------------

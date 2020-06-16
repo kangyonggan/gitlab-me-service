@@ -12,12 +12,12 @@ public enum YesNo {
     /**
      * 是
      */
-    YES((byte) 1, "是"),
+    YES((byte) 1),
 
     /**
      * 否
      */
-    NO((byte) 0, "否");
+    NO((byte) 0);
 
     /**
      * 代码
@@ -25,14 +25,7 @@ public enum YesNo {
     @Getter
     private final byte code;
 
-    /**
-     * 名称
-     */
-    @Getter
-    private final String name;
-
-    YesNo(byte code, String name) {
+    YesNo(byte code) {
         this.code = code;
-        this.name = name;
     }
 }

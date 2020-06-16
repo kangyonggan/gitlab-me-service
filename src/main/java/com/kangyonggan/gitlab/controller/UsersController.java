@@ -50,7 +50,7 @@ public class UsersController extends BaseController {
         user.setSignUpIp(getIpAddress());
         user.setProjectsLimit(0);
         user.setCanCreateGroup(YesNo.NO.getCode());
-        user.setAccessLevel(AccessLevel.Regular.getCode());
+        user.setAccessLevel(AccessLevel.Regular.name());
         user.setAvatar(null);
         userService.saveUser(user);
 
