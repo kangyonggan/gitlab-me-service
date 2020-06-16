@@ -1,11 +1,23 @@
 package com.kangyonggan.gitlab.service;
 
+import com.kangyonggan.gitlab.dto.GroupRequest;
 import com.kangyonggan.gitlab.model.Group;
+
+import java.util.List;
 
 /**
  * @author kyg
  */
 public interface GroupService {
+
+    /**
+     * 搜索组
+     *
+     * @param request
+     * @return
+     */
+    List<Group> searchGroups(GroupRequest request);
+
     /**
      * 保存组
      *

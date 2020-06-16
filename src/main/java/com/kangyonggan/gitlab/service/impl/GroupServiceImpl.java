@@ -2,14 +2,21 @@ package com.kangyonggan.gitlab.service.impl;
 
 import com.kangyonggan.gitlab.annotation.MethodLog;
 import com.kangyonggan.gitlab.constants.Access;
+import com.kangyonggan.gitlab.dto.GroupRequest;
+import com.kangyonggan.gitlab.mapper.GroupMapper;
 import com.kangyonggan.gitlab.model.Group;
 import com.kangyonggan.gitlab.model.GroupUserAccess;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.GroupService;
 import com.kangyonggan.gitlab.service.GroupUserAccessService;
+import com.kangyonggan.gitlab.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+
+import java.util.List;
 
 /**
  * @author kyg
@@ -19,6 +26,27 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
 
     @Autowired
     private GroupUserAccessService groupUserAccessService;
+
+    @Autowired
+    private GroupMapper groupMapper;
+
+    @Override
+    public List<Group> searchGroups(GroupRequest request) {
+        Example example = new Example(Group.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        String groupPath = request.getGroupPath();
+        if (StringUtils.isNotEmpty(groupPath)) {
+            criteria.andLike("groupPath", StringUtil.toLike(groupPath));
+        }
+        String groupName = request.getGroupName();
+        if (StringUtils.isNotEmpty(groupName)) {
+            criteria.andLike("groupName", StringUtil.toLike(groupName));
+        }
+
+        sortAndPage(request, example);
+        return baseMapper.selectByExample(example);
+    }
 
     @Override
     @MethodLog

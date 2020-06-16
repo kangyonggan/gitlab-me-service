@@ -65,5 +65,11 @@ public class Group implements Serializable {
     @Column(name = "updated_time")
     private Date updatedTime;
 
+    /**
+     * 用户数量
+     */
+    @Transient
+    private Integer userCount;
+
     private static final long serialVersionUID = 1L;
 }

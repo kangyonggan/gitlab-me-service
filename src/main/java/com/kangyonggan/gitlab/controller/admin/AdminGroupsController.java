@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -35,7 +36,8 @@ public class AdminGroupsController extends BaseController {
     public Response list(GroupRequest request) {
         Response response = successResponse();
 
-        PageInfo<Group> pageInfo = new PageInfo<>(new ArrayList<>());
+        List<Group> list = groupService.searchGroups(request);
+        PageInfo<Group> pageInfo = new PageInfo<>(list);
 
         response.put("pageInfo", pageInfo);
         return response;
@@ -80,9 +82,12 @@ public class AdminGroupsController extends BaseController {
     @PutMapping
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response update(Group group) {
-        groupService.updateGroup(group);
+        Response response = successResponse();
 
-        return successResponse();
+        groupService.updateGroup(group);
+        response.put("group", groupService.getGroup(group.getId()));
+
+        return response;
     }
 
     /**

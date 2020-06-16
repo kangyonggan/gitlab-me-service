@@ -1,6 +1,8 @@
 package com.kangyonggan.gitlab.dto;
 
+import com.kangyonggan.gitlab.util.StringUtil;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author kyg
@@ -30,5 +32,13 @@ public class PageRequest extends Request {
      * 排序顺序(ascending: 升序，descending：降序)
      */
     private String order;
+
+    public String getOrderBy() {
+        if (!StringUtil.hasEmpty(prop, order)) {
+            return StringUtil.camelToUnderLine(prop) + " " + (ASC.equals(order) ? "ASC" : "DESC");
+        }
+
+        return StringUtils.EMPTY;
+    }
 
 }

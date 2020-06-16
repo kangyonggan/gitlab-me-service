@@ -7,4 +7,5 @@ import com.kangyonggan.gitlab.model.Group;
  * @author mbg
  */
 public interface GroupMapper extends BaseMapper<Group> {
+
 }
