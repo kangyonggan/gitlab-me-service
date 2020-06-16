@@ -87,4 +87,12 @@ public interface UserService {
      * @param id
      */
     void removeUser(Long id);
+
+    /**
+     * 查询全部用户
+     *
+     * @return
+     */
+    List<User> findAllUsers();
+
 }

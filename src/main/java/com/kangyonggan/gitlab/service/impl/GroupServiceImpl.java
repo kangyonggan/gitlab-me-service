@@ -3,12 +3,11 @@ package com.kangyonggan.gitlab.service.impl;
 import com.kangyonggan.gitlab.annotation.MethodLog;
 import com.kangyonggan.gitlab.constants.Access;
 import com.kangyonggan.gitlab.dto.GroupRequest;
-import com.kangyonggan.gitlab.mapper.GroupMapper;
 import com.kangyonggan.gitlab.model.Group;
-import com.kangyonggan.gitlab.model.GroupUserAccess;
+import com.kangyonggan.gitlab.model.GroupUser;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.GroupService;
-import com.kangyonggan.gitlab.service.GroupUserAccessService;
+import com.kangyonggan.gitlab.service.GroupUserService;
 import com.kangyonggan.gitlab.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +24,7 @@ import java.util.List;
 public class GroupServiceImpl extends BaseService<Group> implements GroupService {
 
     @Autowired
-    private GroupUserAccessService groupUserAccessService;
-
-    @Autowired
-    private GroupMapper groupMapper;
+    private GroupUserService groupUserService;
 
     @Override
     public List<Group> searchGroups(GroupRequest request) {
@@ -54,12 +50,12 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
     public Group saveGroup(Group group, Long userId) {
         baseMapper.insertSelective(group);
 
-        GroupUserAccess access = new GroupUserAccess();
-        access.setGroupId(group.getId());
-        access.setUserId(userId);
-        access.setAccess(Access.Owner.name());
+        GroupUser groupUser = new GroupUser();
+        groupUser.setGroupId(group.getId());
+        groupUser.setUserId(userId);
+        groupUser.setAccess(Access.Owner.getCode());
 
-        groupUserAccessService.saveGroupUserAccess(access);
+        groupUserService.saveGroupUser(groupUser);
 
         return group;
     }
@@ -82,8 +78,8 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
     public void removeGroup(Long id) {
         baseMapper.deleteByPrimaryKey(id);
 
-        // 删除组用户权限
-        groupUserAccessService.removeGroupUserAccess(id);
+        // 删除组用户
+        groupUserService.removeGroupUser(id);
     }
 
     @Override

@@ -43,6 +43,22 @@ public class AdminUsersController extends BaseController {
     }
 
     /**
+     * 查询全部用户
+     *
+     * @return
+     */
+    @GetMapping("all")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response all() {
+        Response response = successResponse();
+
+        List<User> users = userService.findAllUsers();
+
+        response.put("users", users);
+        return response;
+    }
+
+    /**
      * 保存用户
      *
      * @param user

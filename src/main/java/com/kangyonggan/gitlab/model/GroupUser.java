@@ -1,16 +1,17 @@
 package com.kangyonggan.gitlab.model;
 
+import lombok.Data;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
 
 /**
  * @author mbg
  */
 @Data
-@Table(name = "group_user_access")
-public class GroupUserAccess implements Serializable {
+@Table(name = "group_user")
+public class GroupUser implements Serializable {
     /**
      * ID
      */
@@ -33,7 +34,7 @@ public class GroupUserAccess implements Serializable {
     /**
      * 权限
      */
-    private String access;
+    private byte access;
 
     /**
      * 失效日期

@@ -164,12 +164,12 @@ CREATE UNIQUE INDEX group_path_UNIQUE
     ON `group` (group_path);
 
 -- ----------------------------
---  Table structure for group_user_access
+--  Table structure for group_user
 -- ----------------------------
 DROP TABLE
-    IF EXISTS group_user_access;
+    IF EXISTS group_user;
 
-CREATE TABLE group_user_access
+CREATE TABLE group_user
 (
     id              BIGINT(20) PRIMARY KEY AUTO_INCREMENT NOT NULL
         COMMENT 'ID',
@@ -177,7 +177,7 @@ CREATE TABLE group_user_access
         COMMENT '组ID',
     user_id         BIGINT(20)                            NOT NULL
         COMMENT '用户ID',
-    access          VARCHAR(20)                           NOT NULL
+    access          TINYINT                               NOT NULL DEFAULT 0
         COMMENT '权限',
     expiration_date DATE                                  NULL
         COMMENT '失效日期',
@@ -186,11 +186,11 @@ CREATE TABLE group_user_access
     updated_time    TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         COMMENT '更新时间'
 )
-    COMMENT '组用户权限表';
-CREATE INDEX ix_group
-    ON `group_user_access` (group_id);
+    COMMENT '组用户表';
+CREATE UNIQUE INDEX group_user_UNIQUE
+    ON group_user (group_id, user_id);
 CREATE INDEX ix_user
-    ON `group_user_access` (user_id);
+    ON group_user (user_id);
 
 #====================初始数据====================#
 

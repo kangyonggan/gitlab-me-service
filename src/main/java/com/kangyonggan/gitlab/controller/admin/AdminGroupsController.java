@@ -5,13 +5,14 @@ import com.kangyonggan.gitlab.annotation.PermissionAccessLevel;
 import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.controller.BaseController;
 import com.kangyonggan.gitlab.dto.GroupRequest;
+import com.kangyonggan.gitlab.dto.GroupUserDto;
 import com.kangyonggan.gitlab.dto.Response;
 import com.kangyonggan.gitlab.model.Group;
 import com.kangyonggan.gitlab.service.GroupService;
+import com.kangyonggan.gitlab.service.GroupUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,6 +25,9 @@ public class AdminGroupsController extends BaseController {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private GroupUserService groupUserService;
 
     /**
      * 组列表查询
@@ -91,7 +95,7 @@ public class AdminGroupsController extends BaseController {
     }
 
     /**
-     * 物理删除
+     * 物理删除组
      *
      * @param id
      * @return
@@ -101,6 +105,37 @@ public class AdminGroupsController extends BaseController {
     public Response delete(@PathVariable Long id) {
         groupService.removeGroup(id);
 
+        return successResponse();
+    }
+
+    /**
+     * 查询组用户
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("{id:[\\d]+}/users")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response users(@PathVariable Long id) {
+        Response response = successResponse();
+        List<GroupUserDto> groupUsers = groupUserService.findGroupUsers(id);
+
+        response.put("groupUsers", groupUsers);
+        return response;
+    }
+
+    /**
+     * 批量添加组用户
+     *
+     * @param id
+     * @param access
+     * @param userIds
+     * @return
+     */
+    @PostMapping("{id:[\\d]+}/users")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response users(@PathVariable Long id, @RequestParam byte access, @RequestParam Long[] userIds) {
+        groupUserService.saveGroupUsers(id, access, userIds);
         return successResponse();
     }
 

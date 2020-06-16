@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kangyonggan.gitlab.mapper.GroupUserMapper">
+    <resultMap id="BaseResultMap" type="com.kangyonggan.gitlab.model.GroupUser">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="group_id" jdbcType="BIGINT" property="groupId" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="access" jdbcType="TINYINT" property="access" />
+        <result column="expiration_date" jdbcType="DATE" property="expirationDate" />
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    </resultMap>
+
+    <insert id="insertGroupUsers">
+        INSERT INTO group_user (group_id, user_id, access) VALUES
+        <foreach collection="userIds" item="userId" separator=",">
+            (#{groupId}, #{userId}, #{access})
+        </foreach>
+    </insert>
+
+    <select id="selectGroupUsers" resultType="com.kangyonggan.gitlab.dto.GroupUserDto">
+        SELECT a.id, a.access, a.expiration_date AS expirationDate,
+            a.created_time AS createdTime, b.full_name AS fullName, b.username, b.avatar, b.email
+        FROM group_user a, user b
+        WHERE a.group_id = #{groupId}
+        AND a.user_id = b.id
+        ORDER BY a.id DESC
+    </select>
+</mapper>
