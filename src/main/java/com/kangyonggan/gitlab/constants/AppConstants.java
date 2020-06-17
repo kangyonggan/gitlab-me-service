@@ -36,6 +36,6 @@ public interface AppConstants {
     /**
      * 保留字
      */
-    List<String> RESERVED_WORDS = Arrays.asList("admin", "users", "profile", "404");
+    List<String> RESERVED_WORDS = Arrays.asList("admin", "users", "profile", "groups", "projects", "404");
 
 }
