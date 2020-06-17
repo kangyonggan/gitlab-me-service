@@ -2,6 +2,8 @@ package com.kangyonggan.gitlab.controller;
 
 import com.kangyonggan.gitlab.constants.Resp;
 import com.kangyonggan.gitlab.dto.Response;
+import com.kangyonggan.gitlab.model.Group;
+import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.GroupService;
 import com.kangyonggan.gitlab.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +33,18 @@ public class ValidateController extends BaseController {
      */
     @GetMapping("getCodeType")
     public Response getCodeType(@RequestParam String code) {
-        Response response = username(code);
-        if (Resp.FAILURE.getRespCo().equals(response.getRespCo())) {
-            response.success().put("type", "Users");
+        Response response = successResponse();
+        User user = userService.findUserByUsernameOrEmail(code);
+        if (user != null) {
+            response.put("type", "Users");
+            response.put("item", user);
             return response;
         }
 
-        response = groupPath(code);
-        if (Resp.FAILURE.getRespCo().equals(response.getRespCo())) {
-            response.success().put("type", "Groups");
+        Group group = groupService.findGroupByPath(code);
+        if (group != null) {
+            response.put("type", "Groups");
+            response.put("item", group);
             return response;
         }
 
