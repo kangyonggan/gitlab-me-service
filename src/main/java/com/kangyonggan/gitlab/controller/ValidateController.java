@@ -1,6 +1,6 @@
 package com.kangyonggan.gitlab.controller;
 
-import com.kangyonggan.gitlab.constants.AppConstants;
+import com.kangyonggan.gitlab.constants.Resp;
 import com.kangyonggan.gitlab.dto.Response;
 import com.kangyonggan.gitlab.service.GroupService;
 import com.kangyonggan.gitlab.service.UserService;
@@ -24,20 +24,47 @@ public class ValidateController extends BaseController {
     private GroupService groupService;
 
     /**
-     * 校验是否是保留字
+     * 获取代码类型
      *
-     * @param word
+     * @param code
      * @return
      */
-    @GetMapping("reserved")
-    public Response reserved(@RequestParam String word) {
-        Response response = successResponse();
-
-        if (AppConstants.RESERVED_WORDS.contains(word)) {
-            response.failure(word + " is a reserved name");
+    @GetMapping("getCodeType")
+    public Response getCodeType(@RequestParam String code) {
+        Response response = username(code);
+        if (Resp.FAILURE.getRespCo().equals(response.getRespCo())) {
+            response.success().put("type", "Users");
+            return response;
         }
 
-        return response;
+        response = groupPath(code);
+        if (Resp.FAILURE.getRespCo().equals(response.getRespCo())) {
+            response.success().put("type", "Groups");
+            return response;
+        }
+
+        return response.failure();
+    }
+
+    /**
+     * 校验是否是唯一的
+     *
+     * @param code
+     * @return
+     */
+    @GetMapping("uniqueCode")
+    public Response uniqueCode(@RequestParam String code) {
+        Response response = username(code);
+        if (Resp.FAILURE.getRespCo().equals(response.getRespCo())) {
+            return response.failure(code + " has already been taken");
+        }
+
+        response = groupPath(code);
+        if (Resp.FAILURE.getRespCo().equals(response.getRespCo())) {
+            return response.failure(code + " has already been taken");
+        }
+
+        return successResponse();
     }
 
     /**

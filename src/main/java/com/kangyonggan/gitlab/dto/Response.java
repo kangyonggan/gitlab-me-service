@@ -51,6 +51,25 @@ public class Response implements Serializable {
     }
 
     /**
+     * 置为成功
+     *
+     * @return
+     */
+    public Response success() {
+        return success(Resp.SUCCESS.getRespMsg());
+    }
+
+    /**
+     * 置为成功
+     *
+     * @param respMsg
+     * @return
+     */
+    public Response success(String respMsg) {
+        return failure(Resp.SUCCESS.getRespCo(), respMsg);
+    }
+
+    /**
      * 置为失败
      *
      * @param respCo

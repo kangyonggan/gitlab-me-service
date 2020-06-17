@@ -1,8 +1,5 @@
 package com.kangyonggan.gitlab.constants;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @author kyg
  */
@@ -32,10 +29,5 @@ public interface AppConstants {
      * 用户在session中的key
      */
     String KEY_SESSION_USER = "key-session-user";
-
-    /**
-     * 保留字
-     */
-    List<String> RESERVED_WORDS = Arrays.asList("admin", "users", "profile", "groups", "projects", "404");
 
 }
