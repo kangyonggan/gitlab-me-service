@@ -14,6 +14,11 @@ public enum Resp {
     SUCCESS("0000", "success"),
 
     /**
+     * 数据无效
+     */
+    INVALID_DATA("9996", "The data is invalid"),
+
+    /**
      * 权限不足
      */
     PERMISSION_DENIED("9997", "You do not have access to the requested resource"),

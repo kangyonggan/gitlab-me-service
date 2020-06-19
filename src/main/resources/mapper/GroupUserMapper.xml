@@ -15,14 +15,14 @@
     </resultMap>
 
     <insert id="insertGroupUsers">
-        INSERT INTO group_user (group_id, user_id, access) VALUES
+        INSERT INTO group_user (group_id, user_id, access, expiration_date) VALUES
         <foreach collection="userIds" item="userId" separator=",">
-            (#{groupId}, #{userId}, #{access})
+            (#{groupId}, #{userId}, #{access}, #{expirationDate})
         </foreach>
     </insert>
 
     <select id="selectGroupUsers" resultType="com.kangyonggan.gitlab.dto.GroupUserDto">
-        SELECT a.id, a.access, a.expiration_date AS expirationDate,
+        SELECT a.id, a.access, a.expiration_date AS expirationDate, a.user_id AS userId,
             a.created_time AS createdTime, b.full_name AS fullName, b.username, b.avatar, b.email
         FROM group_user a, user b
         WHERE a.group_id = #{groupId}

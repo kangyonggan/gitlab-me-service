@@ -13,9 +13,22 @@ import java.util.Date;
  */
 public final class DateUtil {
 
-    private static ZoneId zoneId = ZoneId.systemDefault();
+    private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
-    private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final String DEFAULT_FORMAT = "yyyy-MM-dd";
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_FORMAT);
+
+    /**
+     * 日期解析
+     *
+     * @param date
+     * @return
+     * @throws ParseException
+     */
+    public static Date parseDate(String date) throws ParseException {
+        return parseDate(date, DEFAULT_FORMAT);
+    }
 
     /**
      * 日期解析
@@ -36,7 +49,7 @@ public final class DateUtil {
      * @return
      */
     private static Date toDate(LocalDateTime localDateTime) {
-        return Date.from(localDateTime.atZone(zoneId).toInstant());
+        return Date.from(localDateTime.atZone(ZONE_ID).toInstant());
     }
 
     /**
@@ -46,7 +59,7 @@ public final class DateUtil {
      * @return
      */
     public static LocalDateTime toLocalDateTime(Date date) {
-        return LocalDateTime.ofInstant(date.toInstant(), zoneId);
+        return LocalDateTime.ofInstant(date.toInstant(), ZONE_ID);
     }
 
     /**
@@ -77,7 +90,7 @@ public final class DateUtil {
      * @return
      */
     public static String plusDays(String date, long daysToAdd) {
-        return LocalDate.parse(date, dateFormatter).plusDays(daysToAdd).format(dateFormatter);
+        return LocalDate.parse(date, DATE_FORMATTER).plusDays(daysToAdd).format(DATE_FORMATTER);
     }
 
     /**
@@ -87,7 +100,7 @@ public final class DateUtil {
      * @return
      */
     public static String plusDays(long daysToAdd) {
-        return LocalDate.now().plusDays(daysToAdd).format(dateFormatter);
+        return LocalDate.now().plusDays(daysToAdd).format(DATE_FORMATTER);
     }
 
     /**
@@ -97,7 +110,7 @@ public final class DateUtil {
      * @return
      */
     public static String plusWeeks(long weeksToAdd) {
-        return LocalDate.now().plusWeeks(weeksToAdd).format(dateFormatter);
+        return LocalDate.now().plusWeeks(weeksToAdd).format(DATE_FORMATTER);
     }
 
     /**
@@ -107,7 +120,7 @@ public final class DateUtil {
      * @return
      */
     public static String plusMonths(long monthsToAdd) {
-        return LocalDate.now().plusMonths(monthsToAdd).format(dateFormatter);
+        return LocalDate.now().plusMonths(monthsToAdd).format(DATE_FORMATTER);
     }
 
     /**
@@ -117,7 +130,7 @@ public final class DateUtil {
      * @return
      */
     public static String plusYears(long yearsToAdd) {
-        return LocalDate.now().plusYears(yearsToAdd).format(dateFormatter);
+        return LocalDate.now().plusYears(yearsToAdd).format(DATE_FORMATTER);
     }
 
     /**

@@ -74,7 +74,7 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
         baseMapper.deleteByPrimaryKey(id);
 
         // 删除组用户
-        groupUserService.removeGroupUser(id);
+        groupUserService.removeGroupUsers(id);
     }
 
     @Override

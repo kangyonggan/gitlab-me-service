@@ -17,8 +17,10 @@ public interface GroupUserMapper extends BaseMapper<GroupUser> {
      * @param groupId
      * @param access
      * @param userIds
+     * @param expirationDate
      */
-    void insertGroupUsers(@Param("groupId") Long groupId, @Param("access") byte access, @Param("userIds") Long[] userIds);
+    void insertGroupUsers(@Param("groupId") Long groupId, @Param("access") byte access,
+                          @Param("userIds") Long[] userIds, @Param("expirationDate") String expirationDate);
 
     /**
      * 查询组用户

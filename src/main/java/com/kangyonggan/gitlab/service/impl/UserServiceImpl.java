@@ -6,6 +6,7 @@ import com.kangyonggan.gitlab.constants.AppConstants;
 import com.kangyonggan.gitlab.constants.EmailTemplateCode;
 import com.kangyonggan.gitlab.constants.YesNo;
 import com.kangyonggan.gitlab.dto.UserRequest;
+import com.kangyonggan.gitlab.mapper.UserMapper;
 import com.kangyonggan.gitlab.model.Email;
 import com.kangyonggan.gitlab.model.EmailTemplate;
 import com.kangyonggan.gitlab.model.User;
@@ -46,6 +47,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Value("${app.name}")
     private String appName;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public boolean existsUsername(String username) {
@@ -177,6 +181,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @MethodLog
     public List<User> findAllUsers() {
         return baseMapper.selectAll();
+    }
+
+    @Override
+    @MethodLog
+    public List<User> findUsersWithoutGroup(Long groupId) {
+        return userMapper.selectUsersWithoutGroup(groupId);
     }
 
     /**

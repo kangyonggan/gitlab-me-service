@@ -21,7 +21,7 @@ public interface GroupUserService {
      *
      * @param groupId
      */
-    void removeGroupUser(Long groupId);
+    void removeGroupUsers(Long groupId);
 
     /**
      * 批量保存组用户
@@ -29,8 +29,9 @@ public interface GroupUserService {
      * @param groupId
      * @param access
      * @param userIds
+     * @param expirationDate
      */
-    void saveGroupUsers(Long groupId, byte access, Long[] userIds);
+    void saveGroupUsers(Long groupId, byte access, Long[] userIds, String expirationDate);
 
     /**
      * 查询组用户
@@ -40,4 +41,24 @@ public interface GroupUserService {
      */
     List<GroupUserDto> findGroupUsers(Long groupId);
 
+    /**
+     * 删除组用户
+     *
+     * @param groupId
+     * @param groupUserId
+     * @return
+     */
+    boolean removeGroupUser(Long groupId, Long groupUserId);
+
+    /**
+     * 更新组用户
+     *
+     * @param groupId
+     * @param groupUserId
+     * @param access
+     * @param expirationDate
+     * @return
+     * @throws Exception
+     */
+    boolean updateGroupUser(Long groupId, Long groupUserId, byte access, String expirationDate) throws Exception;
 }

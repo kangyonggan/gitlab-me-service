@@ -13,6 +13,7 @@ import com.kangyonggan.gitlab.service.GroupUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -130,12 +131,14 @@ public class AdminGroupsController extends BaseController {
      * @param id
      * @param access
      * @param userIds
+     * @param expirationDate
      * @return
      */
     @PostMapping("{id:[\\d]+}/users")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response users(@PathVariable Long id, @RequestParam byte access, @RequestParam Long[] userIds) {
-        groupUserService.saveGroupUsers(id, access, userIds);
+    public Response users(@PathVariable Long id, @RequestParam byte access,
+                          @RequestParam Long[] userIds, @RequestParam(required = false) String expirationDate) {
+        groupUserService.saveGroupUsers(id, access, userIds, expirationDate);
         return successResponse();
     }
 
