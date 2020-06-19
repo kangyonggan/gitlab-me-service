@@ -89,13 +89,6 @@ public interface UserService {
     void removeUser(Long id);
 
     /**
-     * 查询全部用户
-     *
-     * @return
-     */
-    List<User> findAllUsers();
-
-    /**
      * 查询除了指定组的用户
      *
      * @param groupId

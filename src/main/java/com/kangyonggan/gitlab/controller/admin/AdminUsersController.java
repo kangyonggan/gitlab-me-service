@@ -43,16 +43,16 @@ public class AdminUsersController extends BaseController {
     }
 
     /**
-     * 查询全部用户
+     * 查询除了指定组的用户
      *
+     * @param groupId
      * @return
      */
-    @GetMapping("all")
+    @GetMapping("withOutGroup/{groupId:[\\d]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response all() {
+    public Response withOutGroup(@PathVariable Long groupId) {
         Response response = successResponse();
-
-        List<User> users = userService.findAllUsers();
+        List<User> users = userService.findUsersWithoutGroup(groupId);
 
         response.put("users", users);
         return response;

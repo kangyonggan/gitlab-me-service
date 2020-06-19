@@ -179,12 +179,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
     @MethodLog
-    public List<User> findAllUsers() {
-        return baseMapper.selectAll();
-    }
-
-    @Override
-    @MethodLog
     public List<User> findUsersWithoutGroup(Long groupId) {
         return userMapper.selectUsersWithoutGroup(groupId);
     }
