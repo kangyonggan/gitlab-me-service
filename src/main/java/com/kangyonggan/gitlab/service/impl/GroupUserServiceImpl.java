@@ -98,4 +98,12 @@ public class GroupUserServiceImpl extends BaseService<GroupUser> implements Grou
 
         return false;
     }
+
+    @Override
+    @MethodLog
+    public void removeUserGroups(Long userId) {
+        GroupUser groupUser = new GroupUser();
+        groupUser.setUserId(userId);
+        baseMapper.delete(groupUser);
+    }
 }

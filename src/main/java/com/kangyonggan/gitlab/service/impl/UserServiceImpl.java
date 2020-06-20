@@ -10,10 +10,7 @@ import com.kangyonggan.gitlab.mapper.UserMapper;
 import com.kangyonggan.gitlab.model.Email;
 import com.kangyonggan.gitlab.model.EmailTemplate;
 import com.kangyonggan.gitlab.model.User;
-import com.kangyonggan.gitlab.service.BaseService;
-import com.kangyonggan.gitlab.service.EmailService;
-import com.kangyonggan.gitlab.service.EmailTemplateService;
-import com.kangyonggan.gitlab.service.UserService;
+import com.kangyonggan.gitlab.service.*;
 import com.kangyonggan.gitlab.util.Digests;
 import com.kangyonggan.gitlab.util.Encodes;
 import com.kangyonggan.gitlab.util.StringUtil;
@@ -50,6 +47,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private GroupUserService groupUserService;
 
     @Override
     public boolean existsUsername(String username) {
@@ -173,8 +176,15 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
     @MethodLog
+    @Transactional
     public void removeUser(Long id) {
         baseMapper.deleteByPrimaryKey(id);
+
+        // 删除自己是唯一owner的组
+        groupService.removeOnlyOwnerGroups(id);
+
+        // 删除用户所在组
+        groupUserService.removeUserGroups(id);
     }
 
     @Override

@@ -61,4 +61,12 @@ public interface GroupUserService {
      * @throws Exception
      */
     boolean updateGroupUser(Long groupId, Long groupUserId, byte access, String expirationDate) throws Exception;
+
+    /**
+     * 删除用户所在组
+     *
+     * @param userId
+     */
+    void removeUserGroups(Long userId);
+
 }

@@ -3,6 +3,7 @@ package com.kangyonggan.gitlab.service.impl;
 import com.kangyonggan.gitlab.annotation.MethodLog;
 import com.kangyonggan.gitlab.constants.Access;
 import com.kangyonggan.gitlab.dto.GroupRequest;
+import com.kangyonggan.gitlab.mapper.GroupMapper;
 import com.kangyonggan.gitlab.model.Group;
 import com.kangyonggan.gitlab.model.GroupUser;
 import com.kangyonggan.gitlab.service.BaseService;
@@ -25,6 +26,9 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
 
     @Autowired
     private GroupUserService groupUserService;
+
+    @Autowired
+    private GroupMapper groupMapper;
 
     @Override
     public List<Group> searchGroups(GroupRequest request) {
@@ -61,11 +65,8 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void updateGroup(Group group) {
         baseMapper.updateByPrimaryKeySelective(group);
-
-        // TODO group path 修改，组项目空间也要更新
     }
 
     @Override
@@ -91,5 +92,11 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
         Group group = new Group();
         group.setGroupPath(groupPath);
         return baseMapper.selectOne(group);
+    }
+
+    @Override
+    @MethodLog
+    public void removeOnlyOwnerGroups(Long userId) {
+        groupMapper.deleteOnlyOwnerGroups(userId);
     }
 }

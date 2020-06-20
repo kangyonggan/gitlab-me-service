@@ -56,4 +56,11 @@ public interface GroupService {
      * @return
      */
     Group findGroupByPath(String groupPath);
+
+    /**
+     * 删除自己是唯一owner的组
+     *
+     * @param userId
+     */
+    void removeOnlyOwnerGroups(Long userId);
 }
