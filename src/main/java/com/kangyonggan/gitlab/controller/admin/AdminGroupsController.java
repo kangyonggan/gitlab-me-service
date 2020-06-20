@@ -13,7 +13,6 @@ import com.kangyonggan.gitlab.service.GroupUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -57,11 +56,8 @@ public class AdminGroupsController extends BaseController {
     @PostMapping
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response save(Group group) {
-        Response response = successResponse();
-        group = groupService.saveGroup(group, currentUserId());
-
-        response.put("group", group);
-        return response;
+        groupService.saveGroup(group, currentUserId());
+        return successResponse();
     }
 
     /**
@@ -87,12 +83,8 @@ public class AdminGroupsController extends BaseController {
     @PutMapping
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response update(Group group) {
-        Response response = successResponse();
-
         groupService.updateGroup(group);
-        response.put("group", groupService.findGroupByPath(group.getGroupPath()));
-
-        return response;
+        return successResponse();
     }
 
     /**

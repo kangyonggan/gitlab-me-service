@@ -23,9 +23,8 @@ public interface GroupService {
      *
      * @param group
      * @param userId
-     * @return
      */
-    Group saveGroup(Group group, Long userId);
+    void saveGroup(Group group, Long userId);
 
     /**
      * 更新组

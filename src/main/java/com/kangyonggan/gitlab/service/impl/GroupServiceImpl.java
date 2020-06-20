@@ -51,7 +51,7 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
     @Override
     @MethodLog
     @Transactional(rollbackFor = Exception.class)
-    public Group saveGroup(Group group, Long userId) {
+    public void saveGroup(Group group, Long userId) {
         baseMapper.insertSelective(group);
 
         GroupUser groupUser = new GroupUser();
@@ -60,8 +60,6 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
         groupUser.setAccess(Access.Owner.getCode());
 
         groupUserService.saveGroupUser(groupUser);
-
-        return group;
     }
 
     @Override

@@ -176,7 +176,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
     @MethodLog
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void removeUser(Long id) {
         baseMapper.deleteByPrimaryKey(id);
 

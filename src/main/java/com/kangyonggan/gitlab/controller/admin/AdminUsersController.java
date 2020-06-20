@@ -67,12 +67,9 @@ public class AdminUsersController extends BaseController {
     @PostMapping
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response save(User user) {
-        Response response = successResponse();
         user.setSignUpIp(getIpAddress());
         userService.saveUser(user);
-
-        response.put("user", user);
-        return response;
+        return successResponse();
     }
 
     /**
@@ -98,11 +95,8 @@ public class AdminUsersController extends BaseController {
     @PutMapping
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response update(User user) {
-        Response response = successResponse();
         userService.updateUser(user);
-
-        response.put("user", userService.getUser(user.getId()));
-        return response;
+        return successResponse();
     }
 
     /**
