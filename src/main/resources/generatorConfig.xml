@@ -14,8 +14,8 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/gitlab?nullCatalogMeansCurrent=true"
-                        userId="root" password="o09iu87y"/>
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/gitlab?serverTimezone=UTC"
+                        userId="root" password="123456"/>
 
         <!--TableName.java-->
         <javaModelGenerator targetPackage="com.kangyonggan.gitlab.model"

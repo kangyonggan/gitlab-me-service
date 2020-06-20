@@ -192,6 +192,37 @@ CREATE UNIQUE INDEX group_user_UNIQUE
 CREATE INDEX ix_user
     ON group_user (user_id);
 
+-- ----------------------------
+--  Table structure for project
+-- ----------------------------
+DROP TABLE
+    IF EXISTS project;
+
+CREATE TABLE project
+(
+    id               BIGINT(20) PRIMARY KEY AUTO_INCREMENT NOT NULL
+        COMMENT 'ID',
+    project_path     VARCHAR(20)                           NOT NULL
+        COMMENT '项目路径',
+    project_name     VARCHAR(20)                           NOT NULL
+        COMMENT '项目名称',
+    description      VARCHAR(256)                          NOT NULL DEFAULT ''
+        COMMENT '描述',
+    namespace        VARCHAR(20)                           NOT NULL
+        COMMENT '命名空间',
+    visibility_level TINYINT                               NOT NULL
+        COMMENT '可见级别',
+    is_deleted       TINYINT                               NOT NULL DEFAULT 0
+        COMMENT '逻辑删除',
+    created_time     TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+    updated_time     TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        COMMENT '更新时间'
+)
+    COMMENT '项目表';
+CREATE UNIQUE INDEX namespace_path_UNIQUE
+    ON project (namespace, project_path);
+
 #====================初始数据====================#
 
 -- ----------------------------
