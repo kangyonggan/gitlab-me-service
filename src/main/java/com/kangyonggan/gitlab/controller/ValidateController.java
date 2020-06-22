@@ -5,6 +5,7 @@ import com.kangyonggan.gitlab.dto.Response;
 import com.kangyonggan.gitlab.model.Group;
 import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.GroupService;
+import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,9 @@ public class ValidateController extends BaseController {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private ProjectService projectService;
 
     /**
      * 获取代码类型
@@ -84,6 +88,24 @@ public class ValidateController extends BaseController {
 
         if (userService.existsUsername(username)) {
             response.failure("The username already exists");
+        }
+
+        return response;
+    }
+
+    /**
+     * 校验项目路径是否存在
+     *
+     * @param namespace
+     * @param projectPath
+     * @return
+     */
+    @GetMapping("projectPath")
+    public Response projectPath(@RequestParam String namespace, @RequestParam String projectPath) {
+        Response response = successResponse();
+
+        if (projectService.existsProjectPath(namespace, projectPath)) {
+            response.failure("The project path already exists");
         }
 
         return response;

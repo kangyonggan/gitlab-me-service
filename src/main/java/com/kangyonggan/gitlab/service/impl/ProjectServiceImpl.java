@@ -64,8 +64,9 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
     @Override
     @MethodLog
-    public Project findProjectByPath(String projectPath) {
+    public Project findProjectByNamespaceAndPath(String namespace, String projectPath) {
         Project project = new Project();
+        project.setNamespace(namespace);
         project.setProjectPath(projectPath);
 
         return baseMapper.selectOne(project);
@@ -85,5 +86,14 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
         // 删除项目用户
         projectUserService.removeProjectUsers(id);
+    }
+
+    @Override
+    @MethodLog
+    public boolean existsProjectPath(String namespace, String projectPath) {
+        Project project = new Project();
+        project.setNamespace(namespace);
+        project.setProjectPath(projectPath);
+        return baseMapper.selectCount(project) > 0;
     }
 }

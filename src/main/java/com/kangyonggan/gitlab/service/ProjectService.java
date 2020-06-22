@@ -32,7 +32,7 @@ public interface ProjectService {
      * @param projectPath
      * @return
      */
-    Project findProjectByPath(String projectPath);
+    Project findProjectByNamespaceAndPath(String namespace, String projectPath);
 
     /**
      * 更新项目
@@ -47,4 +47,13 @@ public interface ProjectService {
      * @param id
      */
     void removeProject(Long id);
+
+    /**
+     * 判断项目路径是否存在
+     *
+     * @param namespace
+     * @param projectPath
+     * @return
+     */
+    boolean existsProjectPath(String namespace, String projectPath);
 }

@@ -70,4 +70,11 @@ public interface GroupService {
      */
     List<Group> findAllGroups();
 
+    /**
+     * 查询用户的全部组
+     *
+     * @param userId
+     * @return
+     */
+    List<Group> findUserGroups(Long userId);
 }

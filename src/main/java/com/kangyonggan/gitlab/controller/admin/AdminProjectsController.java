@@ -59,13 +59,13 @@ public class AdminProjectsController extends BaseController {
     }
 
     /**
-     * 查询命名空间
+     * 查询全部命名空间
      *
      * @return
      */
-    @GetMapping("namespaces")
+    @GetMapping("allNamespaces")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response namespaces() {
+    public Response allNamespaces() {
         Response response = successResponse();
         List<Group> groups = groupService.findAllGroups();
         List<User> users = userService.findAllUsers();
@@ -76,16 +76,32 @@ public class AdminProjectsController extends BaseController {
     }
 
     /**
+     * 查询自己的命名空间
+     *
+     * @return
+     */
+    @GetMapping("namespaces")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response namespaces() {
+        Response response = successResponse();
+        List<Group> groups = groupService.findUserGroups(currentUserId());
+
+        response.put("groups", groups);
+        return response;
+    }
+
+    /**
      * 查询项目
      *
+     * @param namespace
      * @param projectPath
      * @return
      */
-    @GetMapping("{projectPath:[\\w]+}")
+    @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response detail(@PathVariable String projectPath) {
+    public Response detail(@PathVariable String namespace, @PathVariable String projectPath) {
         Response response = successResponse();
-        response.put("project", projectService.findProjectByPath(projectPath));
+        response.put("project", projectService.findProjectByNamespaceAndPath(namespace, projectPath));
         return response;
     }
 

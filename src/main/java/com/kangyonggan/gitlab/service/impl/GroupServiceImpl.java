@@ -102,4 +102,9 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
     public List<Group> findAllGroups() {
         return baseMapper.selectAll();
     }
+
+    @Override
+    public List<Group> findUserGroups(Long userId) {
+        return groupMapper.selectUserGroups(userId);
+    }
 }

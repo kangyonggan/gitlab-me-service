@@ -24,4 +24,10 @@
             GROUP BY group_id HAVING COUNT(*) = 1
         )
     </delete>
+
+    <select id="selectUserGroups" resultMap="BaseResultMap">
+        SELECT DISTINCT a.* FROM `group` a, group_user b
+        WHERE a.id = b.group_id
+        AND b.user_id = #{userId}
+    </select>
 </mapper>
