@@ -36,7 +36,7 @@ public class AdminProjectsController extends BaseController {
     @GetMapping
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response list(ProjectRequest request) {
-        Response response = new Response();
+        Response response = successResponse();
 
         List<Project> list = projectService.searchProjects(request);
         PageInfo<Project> pageInfo = new PageInfo<>(list);
