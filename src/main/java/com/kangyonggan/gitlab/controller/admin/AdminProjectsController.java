@@ -8,7 +8,10 @@ import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.dto.Response;
 import com.kangyonggan.gitlab.model.Group;
 import com.kangyonggan.gitlab.model.Project;
+import com.kangyonggan.gitlab.model.User;
+import com.kangyonggan.gitlab.service.GroupService;
 import com.kangyonggan.gitlab.service.ProjectService;
+import com.kangyonggan.gitlab.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,12 @@ public class AdminProjectsController extends BaseController {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     @PermissionAccessLevel(AccessLevel.Admin)
@@ -47,6 +56,23 @@ public class AdminProjectsController extends BaseController {
     public Response save(Project project) {
         projectService.saveProject(project, currentUserId());
         return successResponse();
+    }
+
+    /**
+     * 查询命名空间
+     *
+     * @return
+     */
+    @GetMapping("namespaces")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response namespaces() {
+        Response response = successResponse();
+        List<Group> groups = groupService.findAllGroups();
+        List<User> users = userService.findAllUsers();
+
+        response.put("groups", groups);
+        response.put("users", users);
+        return response;
     }
 
     /**

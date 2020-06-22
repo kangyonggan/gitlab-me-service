@@ -1,12 +1,16 @@
 package com.kangyonggan.gitlab.service.impl;
 
 import com.kangyonggan.gitlab.annotation.MethodLog;
+import com.kangyonggan.gitlab.constants.Access;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.model.Project;
+import com.kangyonggan.gitlab.model.ProjectUser;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.ProjectService;
+import com.kangyonggan.gitlab.service.ProjectUserService;
 import com.kangyonggan.gitlab.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -18,6 +22,9 @@ import java.util.List;
  */
 @Service
 public class ProjectServiceImpl extends BaseService<Project> implements ProjectService {
+
+    @Autowired
+    private ProjectUserService projectUserService;
 
     @Override
     public List<Project> searchProjects(ProjectRequest request) {
@@ -32,6 +39,10 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         if (StringUtils.isNotEmpty(projectName)) {
             criteria.andLike("projectName", StringUtil.toLike(projectName));
         }
+        String namespace = request.getNamespace();
+        if (StringUtils.isNotEmpty(namespace)) {
+            criteria.andEqualTo("namespace", namespace);
+        }
 
         sortAndPage(request, example);
         return baseMapper.selectByExample(example);
@@ -40,8 +51,15 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     @Transactional(rollbackFor = Exception.class)
-    public void saveProject(Project project, Long currentUserId) {
+    public void saveProject(Project project, Long userId) {
         baseMapper.insertSelective(project);
+
+        ProjectUser projectUser = new ProjectUser();
+        projectUser.setProjectId(project.getId());
+        projectUser.setUserId(userId);
+        projectUser.setAccess(Access.Owner.getCode());
+
+        projectUserService.saveProjectUser(projectUser);
     }
 
     @Override
@@ -61,7 +79,11 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
     @Override
     @MethodLog
+    @Transactional(rollbackFor = Exception.class)
     public void removeProject(Long id) {
         baseMapper.deleteByPrimaryKey(id);
+
+        // 删除项目用户
+        projectUserService.removeProjectUsers(id);
     }
 }

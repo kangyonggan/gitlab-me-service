@@ -186,7 +186,7 @@ CREATE TABLE group_user
     updated_time    TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         COMMENT '更新时间'
 )
-    COMMENT '组用户表';
+    COMMENT '组成员表';
 CREATE UNIQUE INDEX group_user_UNIQUE
     ON group_user (group_id, user_id);
 CREATE INDEX ix_user
@@ -222,6 +222,35 @@ CREATE TABLE project
     COMMENT '项目表';
 CREATE UNIQUE INDEX namespace_path_UNIQUE
     ON project (namespace, project_path);
+
+-- ----------------------------
+--  Table structure for project_user
+-- ----------------------------
+DROP TABLE
+    IF EXISTS project_user;
+
+CREATE TABLE project_user
+(
+    id              BIGINT(20) PRIMARY KEY AUTO_INCREMENT NOT NULL
+        COMMENT 'ID',
+    project_id        BIGINT(20)                            NOT NULL
+        COMMENT '项目ID',
+    user_id         BIGINT(20)                            NOT NULL
+        COMMENT '用户ID',
+    access          TINYINT                               NOT NULL DEFAULT 0
+        COMMENT '权限',
+    expiration_date DATE                                  NULL
+        COMMENT '失效日期',
+    created_time    TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP
+        COMMENT '创建时间',
+    updated_time    TIMESTAMP                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        COMMENT '更新时间'
+)
+    COMMENT '项目成员表';
+CREATE UNIQUE INDEX project_user_UNIQUE
+    ON project_user (project_id, user_id);
+CREATE INDEX ix_user
+    ON project_user (user_id);
 
 #====================初始数据====================#
 

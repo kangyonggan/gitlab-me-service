@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface GroupUserMapper extends BaseMapper<GroupUser> {
     /**
-     * 批量保存组用户
+     * 批量保存组成员
      *
      * @param groupId
      * @param access
@@ -23,7 +23,7 @@ public interface GroupUserMapper extends BaseMapper<GroupUser> {
                           @Param("userIds") Long[] userIds, @Param("expirationDate") String expirationDate);
 
     /**
-     * 查询组用户
+     * 查询组成员
      *
      * @param groupId
      * @return

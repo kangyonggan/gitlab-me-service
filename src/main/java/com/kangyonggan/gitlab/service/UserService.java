@@ -95,4 +95,12 @@ public interface UserService {
      * @return
      */
     List<User> findUsersWithoutGroup(Long groupId);
+
+    /**
+     * 查询全部用户
+     *
+     * @return
+     */
+    List<User> findAllUsers();
+
 }

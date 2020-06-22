@@ -10,21 +10,21 @@ import java.util.List;
  */
 public interface GroupUserService {
     /**
-     * 保存组用户
+     * 保存组成员
      *
      * @param groupUser
      */
     void saveGroupUser(GroupUser groupUser);
 
     /**
-     * 删除组用户
+     * 删除组成员
      *
      * @param groupId
      */
     void removeGroupUsers(Long groupId);
 
     /**
-     * 批量保存组用户
+     * 批量保存组成员
      *
      * @param groupId
      * @param access
@@ -34,7 +34,7 @@ public interface GroupUserService {
     void saveGroupUsers(Long groupId, byte access, Long[] userIds, String expirationDate);
 
     /**
-     * 查询组用户
+     * 查询组成员
      *
      * @param groupId
      * @return
@@ -42,7 +42,7 @@ public interface GroupUserService {
     List<GroupUserDto> findGroupUsers(Long groupId);
 
     /**
-     * 删除组用户
+     * 删除组成员
      *
      * @param groupId
      * @param groupUserId
@@ -51,7 +51,7 @@ public interface GroupUserService {
     boolean removeGroupUser(Long groupId, Long groupUserId);
 
     /**
-     * 更新组用户
+     * 更新组成员
      *
      * @param groupId
      * @param groupUserId
@@ -63,7 +63,7 @@ public interface GroupUserService {
     boolean updateGroupUser(Long groupId, Long groupUserId, byte access, String expirationDate) throws Exception;
 
     /**
-     * 删除用户所在组
+     * 删除成员所在组
      *
      * @param userId
      */

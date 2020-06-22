@@ -21,7 +21,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("groups")
-public class GroupsMembersController extends BaseController {
+public class GroupsUsersController extends BaseController {
 
     @Autowired
     private GroupService groupService;
@@ -32,7 +32,7 @@ public class GroupsMembersController extends BaseController {
     @Autowired
     private GroupUserService groupUserService;
 
-    @GetMapping("{groupPath:[\\w]+}/members")
+    @GetMapping("{groupPath:[\\w]+}/users")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response index(@PathVariable String groupPath) {
         Response response = successResponse();
@@ -57,7 +57,7 @@ public class GroupsMembersController extends BaseController {
      * @param groupUserId
      * @return
      */
-    @DeleteMapping("{groupId:[\\d]+}/members/{groupUserId:[\\d]+}")
+    @DeleteMapping("{groupId:[\\d]+}/users/{groupUserId:[\\d]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response delete(@PathVariable Long groupId, @PathVariable Long groupUserId) {
         Response response = successResponse();
@@ -78,7 +78,7 @@ public class GroupsMembersController extends BaseController {
      * @return
      * @throws Exception
      */
-    @PutMapping("{groupId:[\\d]+}/members/{groupUserId:[\\d]+}")
+    @PutMapping("{groupId:[\\d]+}/users/{groupUserId:[\\d]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response update(@PathVariable Long groupId, @PathVariable Long groupUserId, @RequestParam byte access,
                            @RequestParam(required = false) String expirationDate) throws Exception {

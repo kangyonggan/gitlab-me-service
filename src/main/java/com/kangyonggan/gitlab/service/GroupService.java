@@ -62,4 +62,12 @@ public interface GroupService {
      * @param userId
      */
     void removeOnlyOwnerGroups(Long userId);
+
+    /**
+     * 查询全部组
+     *
+     * @return
+     */
+    List<Group> findAllGroups();
+
 }

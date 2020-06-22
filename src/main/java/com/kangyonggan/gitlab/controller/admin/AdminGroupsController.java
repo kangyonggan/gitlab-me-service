@@ -102,7 +102,7 @@ public class AdminGroupsController extends BaseController {
     }
 
     /**
-     * 查询组用户
+     * 查询组成员
      *
      * @param id
      * @return
@@ -118,7 +118,7 @@ public class AdminGroupsController extends BaseController {
     }
 
     /**
-     * 批量添加组用户
+     * 批量添加组成员
      *
      * @param id
      * @param access

@@ -12,4 +12,6 @@ public class ProjectRequest extends PageRequest {
 
     private String projectName;
 
+    private String namespace;
+
 }

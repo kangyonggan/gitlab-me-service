@@ -97,4 +97,9 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
     public void removeOnlyOwnerGroups(Long userId) {
         groupMapper.deleteOnlyOwnerGroups(userId);
     }
+
+    @Override
+    public List<Group> findAllGroups() {
+        return baseMapper.selectAll();
+    }
 }

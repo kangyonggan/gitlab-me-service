@@ -22,9 +22,9 @@ public interface ProjectService {
      * 保持项目
      *
      * @param project
-     * @param currentUserId
+     * @param userId
      */
-    void saveProject(Project project, Long currentUserId);
+    void saveProject(Project project, Long userId);
 
     /**
      * 查询项目
