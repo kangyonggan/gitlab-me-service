@@ -8,9 +8,11 @@ import com.kangyonggan.gitlab.model.ProjectUser;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.ProjectUserService;
+import com.kangyonggan.gitlab.util.ShellUtil;
 import com.kangyonggan.gitlab.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -25,6 +27,12 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
     @Autowired
     private ProjectUserService projectUserService;
+
+    @Value("${gitlab.bin}")
+    private String binPath;
+
+    @Value("${gitlab.project-root}")
+    private String projectRoot;
 
     @Override
     public List<Project> searchProjects(ProjectRequest request) {
@@ -51,7 +59,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     @Transactional(rollbackFor = Exception.class)
-    public void saveProject(Project project, Long userId) {
+    public void saveProject(Project project, Long userId) throws Exception {
         baseMapper.insertSelective(project);
 
         ProjectUser projectUser = new ProjectUser();
@@ -60,6 +68,9 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         projectUser.setAccess(Access.Owner.getCode());
 
         projectUserService.saveProjectUser(projectUser);
+
+        // 创建项目
+        ShellUtil.exec("sh " + binPath + "create_project.sh " + projectRoot + " " + project.getNamespace() + " " + project.getProjectPath());
     }
 
     @Override

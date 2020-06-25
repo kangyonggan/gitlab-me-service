@@ -23,8 +23,9 @@ public interface ProjectService {
      *
      * @param project
      * @param userId
+     * @throws Exception
      */
-    void saveProject(Project project, Long userId);
+    void saveProject(Project project, Long userId) throws Exception;
 
     /**
      * 查询项目

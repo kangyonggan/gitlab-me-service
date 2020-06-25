@@ -13,4 +13,11 @@
         <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
     </resultMap>
+
+    <select id="selectProjectAccess" resultType="java.lang.Byte">
+        SELECT a.access FROM project_user a, project b, user c
+        WHERE a.project_id = b.id AND a.user_id = c.id
+        AND b.namespace = #{namespace} AND b.project_path = #{projectPath}
+        AND c.username = #{username}
+    </select>
 </mapper>

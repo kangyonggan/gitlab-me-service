@@ -29,4 +29,10 @@
         AND a.user_id = b.id
         ORDER BY a.id DESC
     </select>
+
+    <select id="selectGroupAccess" resultType="java.lang.Byte">
+        SELECT a.access FROM group_user a, `group` b, user c
+        WHERE a.group_id = b.id AND a.user_id = c.id
+        AND b.group_path = #{groupPath} AND c.username = #{username}
+    </select>
 </mapper>

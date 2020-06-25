@@ -69,4 +69,12 @@ public interface GroupUserService {
      */
     void removeUserGroups(Long userId);
 
+    /**
+     * 查找组访问权限
+     *
+     * @param groupPath
+     * @param username
+     * @return
+     */
+    Byte findGroupAccess(String groupPath, String username);
 }

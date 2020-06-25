@@ -29,4 +29,13 @@ public interface GroupUserMapper extends BaseMapper<GroupUser> {
      * @return
      */
     List<GroupUserDto> selectGroupUsers(Long groupId);
+
+    /**
+     * 查询组访问权限
+     *
+     * @param groupPath
+     * @param username
+     * @return
+     */
+    Byte selectGroupAccess(@Param("groupPath") String groupPath, @Param("username") String username);
 }

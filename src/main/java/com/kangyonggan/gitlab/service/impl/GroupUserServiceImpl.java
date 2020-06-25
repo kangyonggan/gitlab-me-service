@@ -106,4 +106,9 @@ public class GroupUserServiceImpl extends BaseService<GroupUser> implements Grou
         groupUser.setUserId(userId);
         baseMapper.delete(groupUser);
     }
+
+    @Override
+    public Byte findGroupAccess(String groupPath, String username) {
+        return groupUserMapper.selectGroupAccess(groupPath, username);
+    }
 }

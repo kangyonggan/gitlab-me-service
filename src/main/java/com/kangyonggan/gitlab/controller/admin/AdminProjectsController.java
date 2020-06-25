@@ -50,10 +50,11 @@ public class AdminProjectsController extends BaseController {
      *
      * @param project
      * @return
+     * @throws Exception
      */
     @PostMapping
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response save(Project project) {
+    public Response save(Project project) throws Exception {
         projectService.saveProject(project, currentUserId());
         return successResponse();
     }

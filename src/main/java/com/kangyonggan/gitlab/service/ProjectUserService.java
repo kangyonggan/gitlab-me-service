@@ -20,4 +20,14 @@ public interface ProjectUserService {
      * @param projectId
      */
     void removeProjectUsers(Long projectId);
+
+    /**
+     * 查询项目访问权限
+     *
+     * @param namespace
+     * @param projectPath
+     * @param username
+     * @return
+     */
+    Byte findProjectAccess(String namespace, String projectPath, String username);
 }
