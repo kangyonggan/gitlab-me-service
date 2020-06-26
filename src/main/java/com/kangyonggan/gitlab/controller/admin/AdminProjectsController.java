@@ -111,10 +111,11 @@ public class AdminProjectsController extends BaseController {
      *
      * @param project
      * @return
+     * @throws Exception
      */
     @PutMapping
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response update(Project project) {
+    public Response update(Project project) throws Exception {
         projectService.updateProject(project);
         return successResponse();
     }
@@ -124,10 +125,11 @@ public class AdminProjectsController extends BaseController {
      *
      * @param id
      * @return
+     * @throws Exception
      */
     @DeleteMapping("{id:[\\d]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response delete(@PathVariable Long id) {
+    public Response delete(@PathVariable Long id) throws Exception {
         projectService.removeProject(id);
 
         return successResponse();

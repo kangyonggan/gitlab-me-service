@@ -39,15 +39,17 @@ public interface ProjectService {
      * 更新项目
      *
      * @param project
+     * @throws Exception
      */
-    void updateProject(Project project);
+    void updateProject(Project project) throws Exception;
 
     /**
      * 移除项目
      *
      * @param id
+     * @throws Exception
      */
-    void removeProject(Long id);
+    void removeProject(Long id) throws Exception;
 
     /**
      * 判断项目路径是否存在

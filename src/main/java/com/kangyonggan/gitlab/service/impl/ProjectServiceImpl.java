@@ -85,18 +85,32 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
     @Override
     @MethodLog
-    public void updateProject(Project project) {
+    @Transactional(rollbackFor = Exception.class)
+    public void updateProject(Project project) throws Exception {
+        Project oldProject = baseMapper.selectByPrimaryKey(project.getId());
         baseMapper.updateByPrimaryKeySelective(project);
+
+        if (!oldProject.getProjectPath().equals(project.getProjectPath())
+                || !oldProject.getNamespace().equals(project.getNamespace())) {
+            // 移动项目
+            ShellUtil.exec("sh " + binPath + "/move_project.sh " + projectRoot + " " + oldProject.getNamespace() + " " + oldProject.getProjectPath()
+                    + " " + project.getNamespace() + " " + project.getProjectPath());
+        }
     }
 
     @Override
     @MethodLog
     @Transactional(rollbackFor = Exception.class)
-    public void removeProject(Long id) {
+    public void removeProject(Long id) throws Exception {
+        Project project = baseMapper.selectByPrimaryKey(id);
         baseMapper.deleteByPrimaryKey(id);
 
         // 删除项目用户
         projectUserService.removeProjectUsers(id);
+
+        // 删除项目
+        ShellUtil.exec("sh " + binPath + "/del_project.sh " + projectRoot + " " + project.getNamespace() + " " + project.getProjectPath());
+
     }
 
     @Override
