@@ -8,8 +8,9 @@ spring:
     port: 6379
 
 gitlab:
-  bin: /Users/kyg/code/kyg/gitlab-me-service/src/main/resources/bin/
+  bin-path: /Users/kyg/code/kyg/gitlab-me-service/src/main/resources/bin
   project-root: /Users/kyg/code/kyg/repo
+  htpasswd-path: /usr/local/etc/nginx
 
 app:
   file-upload: @uploadPath@/data/gitlab/upload/

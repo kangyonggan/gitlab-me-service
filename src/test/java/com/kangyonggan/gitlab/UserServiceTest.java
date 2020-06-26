@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * @author kyg
  */
-public class UserServiceImpl extends AbstractTest {
+public class UserServiceTest extends AbstractTest {
 
     @Autowired
     private UserService userService;
 
     @Test
-    public void saveUser() {
+    public void saveUser() throws Exception {
         User user = new User();
 
         user.setFullName("康永敢");

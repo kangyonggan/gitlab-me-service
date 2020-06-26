@@ -13,6 +13,7 @@ import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.*;
 import com.kangyonggan.gitlab.util.Digests;
 import com.kangyonggan.gitlab.util.Encodes;
+import com.kangyonggan.gitlab.util.ShellUtil;
 import com.kangyonggan.gitlab.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Autowired
     private GroupUserService groupUserService;
 
+    @Value("${gitlab.bin-path}")
+    private String binPath;
+
+    @Value("${gitlab.htpasswd-path}")
+    private String htpasswdPath;
+
     @Override
     public boolean existsUsername(String username) {
         User user = new User();
@@ -71,7 +78,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     @MethodLog
     @Transactional(rollbackFor = Exception.class)
-    public void saveUser(User user) {
+    public void saveUser(User user) throws Exception {
+        String pwd = user.getPassword();
         entryptPassword(user);
 
         user.setLastSignInIp(null);
@@ -81,6 +89,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setUpdatedTime(null);
 
         baseMapper.insertSelective(user);
+
+        // 保存htpasswd
+        ShellUtil.exec("sh " + binPath + "/add_htpasswd.sh " + htpasswdPath + " " + user.getUsername() + " " + pwd);
     }
 
     @Override
@@ -98,9 +109,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
     @MethodLog
-    public void updateUser(User user) {
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUser(User user) throws Exception {
         if (StringUtils.isNotEmpty(user.getPassword()) && StringUtils.isEmpty(user.getSalt())) {
+            String pwd = user.getPassword();
             entryptPassword(user);
+
+            // 保存htpasswd
+            ShellUtil.exec("sh " + binPath + "/add_htpasswd.sh " + htpasswdPath + " " + user.getUsername() + " " + pwd);
         } else {
             user.setPassword(null);
             user.setSalt(null);
@@ -134,7 +150,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
     @MethodLog
-    public void resetPassword(String email, String password) {
+    @Transactional(rollbackFor = Exception.class)
+    public void resetPassword(String email, String password) throws Exception {
         User user = new User();
         user.setPassword(password);
         entryptPassword(user);
@@ -142,6 +159,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("email", email);
         baseMapper.updateByExampleSelective(user, example);
+
+        // 保存htpasswd
+        ShellUtil.exec("sh " + binPath + "/add_htpasswd.sh " + htpasswdPath + " " + user.getUsername() + " " + password);
     }
 
     @Override
@@ -177,7 +197,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     @MethodLog
     @Transactional(rollbackFor = Exception.class)
-    public void removeUser(Long id) {
+    public void removeUser(Long id) throws Exception {
+        User user = baseMapper.selectByPrimaryKey(id);
+
         baseMapper.deleteByPrimaryKey(id);
 
         // 删除自己是唯一owner的组
@@ -185,6 +207,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
         // 删除用户所在组
         groupUserService.removeUserGroups(id);
+
+        // 删除htpasswd
+        ShellUtil.exec("sh " + binPath + "/del_htpasswd.sh " + htpasswdPath + " " + user.getUsername());
+
     }
 
     @Override

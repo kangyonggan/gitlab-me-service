@@ -30,8 +30,9 @@ public interface UserService {
      * 保存用户
      *
      * @param user
+     * @throws Exception
      */
-    void saveUser(User user);
+    void saveUser(User user) throws Exception;
 
     /**
      * 根据用户名或者邮箱查找用户
@@ -45,8 +46,9 @@ public interface UserService {
      * 更新用户
      *
      * @param user
+     * @throws Exception
      */
-    void updateUser(User user);
+    void updateUser(User user) throws Exception;
 
     /**
      * 发重置密码邮件
@@ -62,8 +64,9 @@ public interface UserService {
      *
      * @param email
      * @param password
+     * @throws Exception
      */
-    void resetPassword(String email, String password);
+    void resetPassword(String email, String password) throws Exception;
 
     /**
      * 搜索用户
@@ -85,8 +88,9 @@ public interface UserService {
      * 删除用户
      *
      * @param id
+     * @throws Exception
      */
-    void removeUser(Long id);
+    void removeUser(Long id) throws Exception;
 
     /**
      * 查询除了指定组的用户

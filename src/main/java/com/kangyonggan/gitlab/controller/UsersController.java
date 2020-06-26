@@ -44,9 +44,10 @@ public class UsersController extends BaseController {
      *
      * @param user
      * @return
+     * @throws Exception
      */
     @PostMapping("signUp")
-    public Response signUp(User user) {
+    public Response signUp(User user) throws Exception {
         user.setSignUpIp(getIpAddress());
         user.setProjectsLimit(0);
         user.setCanCreateGroup(YesNo.NO.getCode());
@@ -64,10 +65,11 @@ public class UsersController extends BaseController {
      * @param password
      * @param rememberMe
      * @return
+     * @throws Exception
      */
     @PostMapping("signIn")
     public Response signIn(@RequestParam String username, @RequestParam String password,
-                           @RequestParam(required = false, defaultValue = "0") int rememberMe) {
+                           @RequestParam(required = false, defaultValue = "0") int rememberMe) throws Exception {
         Response response = successResponse();
 
         User dbUser = userService.findUserByUsernameOrEmail(username);
@@ -146,9 +148,10 @@ public class UsersController extends BaseController {
      * @param verifyCode
      * @param password
      * @return
+     * @throws Exception
      */
     @PutMapping("resetPassword")
-    public Response resetPassword(@RequestParam Long emailId, @RequestParam String verifyCode, @RequestParam String password) {
+    public Response resetPassword(@RequestParam Long emailId, @RequestParam String verifyCode, @RequestParam String password) throws Exception {
         Response response = successResponse();
         Email email = emailService.getEmail(emailId);
         if (email == null || email.getIsDeleted() == YesNo.YES.getCode()) {

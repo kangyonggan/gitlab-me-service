@@ -25,10 +25,11 @@ public class ProfileController extends BaseController {
      * @param fullName
      * @param email
      * @return
+     * @throws Exception
      */
     @PutMapping
     @PermissionLogin
-    public Response update(@RequestParam String avatar, @RequestParam String fullName, @RequestParam String email) {
+    public Response update(@RequestParam String avatar, @RequestParam String fullName, @RequestParam String email) throws Exception {
         Response response = successResponse();
 
         User user = new User();
@@ -48,10 +49,11 @@ public class ProfileController extends BaseController {
      * 删除头像
      *
      * @return
+     * @throws Exception
      */
     @DeleteMapping("avatar")
     @PermissionLogin
-    public Response removeAvatar() {
+    public Response removeAvatar() throws Exception {
         Response response = successResponse();
 
         User user = new User();

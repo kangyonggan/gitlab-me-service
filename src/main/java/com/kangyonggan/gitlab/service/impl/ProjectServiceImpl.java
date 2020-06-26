@@ -28,7 +28,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Autowired
     private ProjectUserService projectUserService;
 
-    @Value("${gitlab.bin}")
+    @Value("${gitlab.bin-path}")
     private String binPath;
 
     @Value("${gitlab.project-root}")
@@ -70,7 +70,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         projectUserService.saveProjectUser(projectUser);
 
         // 创建项目
-        ShellUtil.exec("sh " + binPath + "create_project.sh " + projectRoot + " " + project.getNamespace() + " " + project.getProjectPath());
+        ShellUtil.exec("sh " + binPath + "/create_project.sh " + projectRoot + " " + project.getNamespace() + " " + project.getProjectPath());
     }
 
     @Override

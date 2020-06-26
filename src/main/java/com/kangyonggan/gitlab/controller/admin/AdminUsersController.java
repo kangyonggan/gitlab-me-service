@@ -63,10 +63,11 @@ public class AdminUsersController extends BaseController {
      *
      * @param user
      * @return
+     * @throws Exception
      */
     @PostMapping
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response save(User user) {
+    public Response save(User user) throws Exception {
         user.setSignUpIp(getIpAddress());
         userService.saveUser(user);
         return successResponse();
@@ -91,29 +92,12 @@ public class AdminUsersController extends BaseController {
      *
      * @param user
      * @return
+     * @throws Exception
      */
     @PutMapping
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response update(User user) {
+    public Response update(User user) throws Exception {
         userService.updateUser(user);
-        return successResponse();
-    }
-
-    /**
-     * 删除/恢复用户
-     *
-     * @param id
-     * @param isDeleted
-     * @return
-     */
-    @PutMapping("{id:[\\d]+}/delete/{isDeleted:\\b0\\b|\\b1\\b}")
-    @PermissionAccessLevel(AccessLevel.Admin)
-    public Response delete(@PathVariable Long id, @PathVariable Byte isDeleted) {
-        User user = new User();
-        user.setId(id);
-        user.setIsDeleted(isDeleted);
-        userService.updateUser(user);
-
         return successResponse();
     }
 
@@ -122,10 +106,11 @@ public class AdminUsersController extends BaseController {
      *
      * @param id
      * @return
+     * @throws Exception
      */
     @DeleteMapping("{id:[\\d]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response delete(@PathVariable Long id) {
+    public Response delete(@PathVariable Long id) throws Exception {
         userService.removeUser(id);
 
         return successResponse();
