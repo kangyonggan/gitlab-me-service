@@ -90,11 +90,21 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         Project oldProject = baseMapper.selectByPrimaryKey(project.getId());
         baseMapper.updateByPrimaryKeySelective(project);
 
-        if (!oldProject.getProjectPath().equals(project.getProjectPath())
-                || !oldProject.getNamespace().equals(project.getNamespace())) {
+        boolean hasChange = (StringUtils.isNotEmpty(project.getProjectPath()) && !oldProject.getProjectPath().equals(project.getProjectPath()))
+                || (StringUtils.isNotEmpty(project.getNamespace()) && !oldProject.getNamespace().equals(project.getNamespace()));
+        if (hasChange) {
+            String newNamespace = project.getNamespace();
+            String newProjectPath = project.getProjectPath();
+            if (StringUtils.isEmpty(newNamespace)) {
+                newNamespace = oldProject.getNamespace();
+            }
+            if (StringUtils.isEmpty(newProjectPath)) {
+                newProjectPath = oldProject.getProjectPath();
+            }
+
             // 移动项目
             ShellUtil.exec("sh " + binPath + "/move_project.sh " + projectRoot + " " + oldProject.getNamespace() + " " + oldProject.getProjectPath()
-                    + " " + project.getNamespace() + " " + project.getProjectPath());
+                    + " " + newNamespace + " " + newProjectPath);
         }
     }
 
