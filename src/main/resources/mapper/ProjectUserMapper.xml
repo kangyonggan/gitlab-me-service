@@ -20,4 +20,13 @@
         AND b.namespace = #{namespace} AND b.project_path = #{projectPath}
         AND c.username = #{username}
     </select>
+
+    <select id="selectProjectUsers" resultType="com.kangyonggan.gitlab.dto.ProjectUserDto">
+        SELECT a.id, a.access, a.expiration_date AS expirationDate, a.user_id AS userId,
+            a.created_time AS createdTime, b.full_name AS fullName, b.username, b.avatar, b.email
+        FROM project_user a, user b
+        WHERE a.project_id = #{projectId}
+        AND a.user_id = b.id
+        ORDER BY a.id DESC
+    </select>
 </mapper>

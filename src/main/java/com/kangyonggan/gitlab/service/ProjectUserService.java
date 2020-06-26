@@ -1,6 +1,9 @@
 package com.kangyonggan.gitlab.service;
 
+import com.kangyonggan.gitlab.dto.ProjectUserDto;
 import com.kangyonggan.gitlab.model.ProjectUser;
+
+import java.util.List;
 
 /**
  * @author kyg
@@ -30,4 +33,13 @@ public interface ProjectUserService {
      * @return
      */
     Byte findProjectAccess(String namespace, String projectPath, String username);
+
+    /**
+     * 查询项目成员
+     *
+     * @param projectId
+     * @return
+     */
+    List<ProjectUserDto> findProjectUsers(Long projectId);
+
 }

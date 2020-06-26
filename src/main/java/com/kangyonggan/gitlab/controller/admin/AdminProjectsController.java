@@ -4,14 +4,14 @@ import com.github.pagehelper.PageInfo;
 import com.kangyonggan.gitlab.annotation.PermissionAccessLevel;
 import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.controller.BaseController;
+import com.kangyonggan.gitlab.dto.GroupUserDto;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
+import com.kangyonggan.gitlab.dto.ProjectUserDto;
 import com.kangyonggan.gitlab.dto.Response;
 import com.kangyonggan.gitlab.model.Group;
 import com.kangyonggan.gitlab.model.Project;
 import com.kangyonggan.gitlab.model.User;
-import com.kangyonggan.gitlab.service.GroupService;
-import com.kangyonggan.gitlab.service.ProjectService;
-import com.kangyonggan.gitlab.service.UserService;
+import com.kangyonggan.gitlab.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +28,16 @@ public class AdminProjectsController extends BaseController {
     private ProjectService projectService;
 
     @Autowired
+    private ProjectUserService projectUserService;
+
+    @Autowired
     private GroupService groupService;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private GroupUserService groupUserService;
 
     @GetMapping
     @PermissionAccessLevel(AccessLevel.Admin)
@@ -102,7 +108,18 @@ public class AdminProjectsController extends BaseController {
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response detail(@PathVariable String namespace, @PathVariable String projectPath) {
         Response response = successResponse();
-        response.put("project", projectService.findProjectByNamespaceAndPath(namespace, projectPath));
+        Project project = projectService.findProjectByNamespaceAndPath(namespace, projectPath);
+        List<ProjectUserDto> projectUsers = projectUserService.findProjectUsers(project.getId());
+
+        Group group = groupService.findGroupByPath(namespace);
+        if (group != null) {
+            List<GroupUserDto> groupUsers = groupUserService.findGroupUsers(group.getId());
+            response.put("groupUsers", groupUsers);
+            response.put("group", group);
+        }
+
+        response.put("project", project);
+        response.put("projectUsers", projectUsers);
         return response;
     }
 
