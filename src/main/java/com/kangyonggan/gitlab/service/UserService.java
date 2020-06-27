@@ -101,6 +101,14 @@ public interface UserService {
     List<User> findUsersWithoutGroup(Long groupId);
 
     /**
+     * 查询除了指定项目的用户
+     *
+     * @param projectId
+     * @return
+     */
+    List<User> findUsersWithoutProject(Long projectId);
+
+    /**
      * 查询全部用户
      *
      * @return

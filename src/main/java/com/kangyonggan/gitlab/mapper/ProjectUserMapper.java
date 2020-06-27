@@ -35,4 +35,14 @@ public interface ProjectUserMapper extends BaseMapper<ProjectUser> {
      * @param namespace
      */
     void deleteProjectUsers(String namespace);
+
+    /**
+     * 批量添加项目成员
+     *
+     * @param projectId
+     * @param access
+     * @param userIds
+     * @param expirationDate
+     */
+    void insertProjectUsers(@Param("projectId") Long projectId, @Param("access") byte access, @Param("userIds") Long[] userIds, @Param("expirationDate") String expirationDate);
 }

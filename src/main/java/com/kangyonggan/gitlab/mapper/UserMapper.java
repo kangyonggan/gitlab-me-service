@@ -18,4 +18,11 @@ public interface UserMapper extends BaseMapper<User> {
      */
     List<User> selectUsersWithoutGroup(Long groupId);
 
+    /**
+     * 查询除了指定项目的用户
+     *
+     * @param projectId
+     * @return
+     */
+    List<User> selectUsersWithoutProject(Long projectId);
 }

@@ -48,4 +48,35 @@ public interface ProjectUserService {
      * @param namespace
      */
     void removeProjectUsers(String namespace);
+
+    /**
+     * 删除项目成员
+     *
+     * @param projectId
+     * @param projectUserId
+     * @return
+     */
+    boolean removeProjectUser(Long projectId, Long projectUserId);
+
+    /**
+     * 更新项目成员信息
+     *
+     * @param projectId
+     * @param projectUserId
+     * @param access
+     * @param expirationDate
+     * @return
+     * @throws Exception
+     */
+    boolean updateProjectUser(Long projectId, Long projectUserId, byte access, String expirationDate) throws Exception;
+
+    /**
+     * 批量添加项目成员
+     *
+     * @param projectId
+     * @param access
+     * @param userIds
+     * @param expirationDate
+     */
+    void saveProjectUsers(Long projectId, byte access, Long[] userIds, String expirationDate);
 }

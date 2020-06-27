@@ -27,4 +27,8 @@
     <select id="selectUsersWithoutGroup" resultMap="BaseResultMap">
         SELECT DISTINCT a.* FROM user a WHERE a.id NOT IN (SELECT b.user_id FROM group_user b WHERE b.group_id = #{groupId})
     </select>
+
+    <select id="selectUsersWithoutProject" resultMap="BaseResultMap">
+        SELECT DISTINCT a.* FROM user a WHERE a.id NOT IN (SELECT b.user_id FROM project_user b WHERE b.project_id = #{projectId})
+    </select>
 </mapper>

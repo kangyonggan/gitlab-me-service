@@ -109,6 +109,30 @@ public class AdminProjectsController extends BaseController {
     public Response detail(@PathVariable String namespace, @PathVariable String projectPath) {
         Response response = successResponse();
         Project project = projectService.findProjectByNamespaceAndPath(namespace, projectPath);
+        Group group = groupService.findGroupByPath(namespace);
+        if (group == null) {
+            User user = userService.findUserByUsernameOrEmail(namespace);
+            response.put("user", user);
+        } else {
+            response.put("group", group);
+        }
+
+        response.put("project", project);
+        return response;
+    }
+
+    /**
+     * 查询项目和成员
+     *
+     * @param namespace
+     * @param projectPath
+     * @return
+     */
+    @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/users")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response detailWithUsers(@PathVariable String namespace, @PathVariable String projectPath) {
+        Response response = successResponse();
+        Project project = projectService.findProjectByNamespaceAndPath(namespace, projectPath);
         List<ProjectUserDto> projectUsers = projectUserService.findProjectUsers(project.getId());
 
         Group group = groupService.findGroupByPath(namespace);

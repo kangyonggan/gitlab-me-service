@@ -233,6 +233,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
+    @MethodLog
+    public List<User> findUsersWithoutProject(Long projectId) {
+        return userMapper.selectUsersWithoutProject(projectId);
+    }
+
+    @Override
     public List<User> findAllUsers() {
         return baseMapper.selectAll();
     }
