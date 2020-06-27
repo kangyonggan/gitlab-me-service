@@ -42,4 +42,10 @@ public interface ProjectUserService {
      */
     List<ProjectUserDto> findProjectUsers(Long projectId);
 
+    /**
+     * 删除命名空间下的项目用户
+     *
+     * @param namespace
+     */
+    void removeProjectUsers(String namespace);
 }

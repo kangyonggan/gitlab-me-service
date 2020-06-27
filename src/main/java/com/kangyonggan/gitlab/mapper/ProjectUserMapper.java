@@ -28,4 +28,11 @@ public interface ProjectUserMapper extends BaseMapper<ProjectUser> {
      * @return
      */
     List<ProjectUserDto> selectProjectUsers(Long projectId);
+
+    /**
+     * 删除命名空间下的项目用户
+     *
+     * @param namespace
+     */
+    void deleteProjectUsers(String namespace);
 }

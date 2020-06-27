@@ -9,6 +9,7 @@ import com.kangyonggan.gitlab.model.GroupUser;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.GroupService;
 import com.kangyonggan.gitlab.service.GroupUserService;
+import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
 
     @Autowired
     private GroupMapper groupMapper;
+
+    @Autowired
+    private ProjectService projectService;
 
     @Override
     public List<Group> searchGroups(GroupRequest request) {
@@ -63,17 +67,28 @@ public class GroupServiceImpl extends BaseService<Group> implements GroupService
     }
 
     @Override
-    public void updateGroup(Group group) {
+    @Transactional(rollbackFor = Exception.class)
+    public void updateGroup(Group group) throws Exception {
+        Group oldGroup = baseMapper.selectByPrimaryKey(group.getId());
+        if (StringUtils.isNotEmpty(group.getGroupPath()) && !oldGroup.getGroupPath().equals(group.getGroupPath())) {
+            // 更新项目的命名空间
+            projectService.updateProjectNamespace(oldGroup.getGroupPath(), group.getGroupPath());
+        }
         baseMapper.updateByPrimaryKeySelective(group);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void removeGroup(Long id) {
+    public void removeGroup(Long id) throws Exception {
+        Group group = baseMapper.selectByPrimaryKey(id);
+
         baseMapper.deleteByPrimaryKey(id);
 
         // 删除组用户
         groupUserService.removeGroupUsers(id);
+
+        // 项目用户的项目
+        projectService.removeProjectByNamespace(group.getGroupPath());
     }
 
     @Override

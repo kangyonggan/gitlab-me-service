@@ -59,4 +59,21 @@ public interface ProjectService {
      * @return
      */
     boolean existsProjectPath(String namespace, String projectPath);
+
+    /**
+     * 更新命名空间
+     *
+     * @param oldNamespace
+     * @param namespace
+     * @throws Exception
+     */
+    void updateProjectNamespace(String oldNamespace, String namespace) throws Exception;
+
+    /**
+     * 删除命名空间下的项目
+     *
+     * @param namespace
+     * @throws Exception
+     */
+    void removeProjectByNamespace(String namespace) throws Exception;
 }

@@ -61,6 +61,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Value("${gitlab.htpasswd-path}")
     private String htpasswdPath;
 
+    @Autowired
+    private ProjectService projectService;
+
     @Override
     public boolean existsUsername(String username) {
         User user = new User();
@@ -111,6 +114,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @MethodLog
     @Transactional(rollbackFor = Exception.class)
     public void updateUser(User user) throws Exception {
+        User oldUser = baseMapper.selectByPrimaryKey(user.getId());
         if (StringUtils.isNotEmpty(user.getPassword()) && StringUtils.isEmpty(user.getSalt())) {
             String pwd = user.getPassword();
             entryptPassword(user);
@@ -121,7 +125,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             user.setPassword(null);
             user.setSalt(null);
         }
+
+        if (StringUtils.isNotEmpty(user.getUsername()) && !oldUser.getUsername().equals(user.getUsername())) {
+            // 更新项目的命名空间
+            projectService.updateProjectNamespace(oldUser.getUsername(), user.getUsername());
+        }
+
         baseMapper.updateByPrimaryKeySelective(user);
+
     }
 
     @Override
@@ -208,9 +219,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         // 删除用户所在组
         groupUserService.removeUserGroups(id);
 
+        // 项目用户的项目
+        projectService.removeProjectByNamespace(user.getUsername());
+
         // 删除htpasswd
         ShellUtil.exec("sh " + binPath + "/del_htpasswd.sh " + htpasswdPath + " " + user.getUsername());
-
     }
 
     @Override

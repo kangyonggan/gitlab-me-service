@@ -30,15 +30,17 @@ public interface GroupService {
      * 更新组
      *
      * @param group
+     * @throws Exception
      */
-    void updateGroup(Group group);
+    void updateGroup(Group group) throws Exception;
 
     /**
      * 删除组
      *
      * @param id
+     * @throws Exception
      */
-    void removeGroup(Long id);
+    void removeGroup(Long id) throws Exception;
 
     /**
      * 判断组路径是否存在

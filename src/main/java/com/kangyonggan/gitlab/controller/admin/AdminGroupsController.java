@@ -79,10 +79,11 @@ public class AdminGroupsController extends BaseController {
      *
      * @param group
      * @return
+     * @throws Exception
      */
     @PutMapping
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response update(Group group) {
+    public Response update(Group group) throws Exception {
         groupService.updateGroup(group);
         return successResponse();
     }
@@ -92,10 +93,11 @@ public class AdminGroupsController extends BaseController {
      *
      * @param id
      * @return
+     * @throws Exception
      */
     @DeleteMapping("{id:[\\d]+}")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response delete(@PathVariable Long id) {
+    public Response delete(@PathVariable Long id) throws Exception {
         groupService.removeGroup(id);
 
         return successResponse();

@@ -44,4 +44,10 @@ public class ProjectUserServiceImpl extends BaseService<ProjectUser> implements 
     public List<ProjectUserDto> findProjectUsers(Long projectId) {
         return projectUserMapper.selectProjectUsers(projectId);
     }
+
+    @Override
+    @MethodLog
+    public void removeProjectUsers(String namespace) {
+        projectUserMapper.deleteProjectUsers(namespace);
+    }
 }

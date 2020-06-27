@@ -131,4 +131,34 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         project.setProjectPath(projectPath);
         return baseMapper.selectCount(project) > 0;
     }
+
+    @Override
+    @MethodLog
+    @Transactional(rollbackFor = Exception.class)
+    public void updateProjectNamespace(String oldNamespace, String namespace) throws Exception {
+        Example example = new Example(Project.class);
+        example.createCriteria().andEqualTo("namespace", oldNamespace);
+
+        Project project = new Project();
+        project.setNamespace(namespace);
+        baseMapper.updateByExampleSelective(project, example);
+
+        // 转移命名空间
+        ShellUtil.exec("sh " + binPath + "/move_namespace.sh " + projectRoot + " " + oldNamespace + " " + namespace);
+    }
+
+    @Override
+    @MethodLog
+    @Transactional(rollbackFor = Exception.class)
+    public void removeProjectByNamespace(String namespace) throws Exception {
+        projectUserService.removeProjectUsers(namespace);
+
+        Project project = new Project();
+        project.setNamespace(namespace);
+
+        baseMapper.delete(project);
+
+        // 删除命名空间下的项目
+        ShellUtil.exec("sh " + binPath + "/del_project.sh " + projectRoot + " " + namespace);
+    }
 }
