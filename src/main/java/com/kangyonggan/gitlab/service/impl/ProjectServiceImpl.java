@@ -2,6 +2,7 @@ package com.kangyonggan.gitlab.service.impl;
 
 import com.kangyonggan.gitlab.annotation.MethodLog;
 import com.kangyonggan.gitlab.constants.Access;
+import com.kangyonggan.gitlab.dto.ProjectInfo;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.model.Project;
 import com.kangyonggan.gitlab.model.ProjectUser;
@@ -11,13 +12,16 @@ import com.kangyonggan.gitlab.service.ProjectUserService;
 import com.kangyonggan.gitlab.util.ShellUtil;
 import com.kangyonggan.gitlab.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author kyg
@@ -161,4 +165,28 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         // 删除命名空间下的项目
         ShellUtil.exec("sh " + binPath + "/del_project.sh " + projectRoot + " " + namespace);
     }
+
+    @Override
+    @MethodLog
+    public ProjectInfo findProjectInfo(String namespace, String projectPath) throws Exception {
+        Project project = findProjectByNamespaceAndPath(namespace, projectPath);
+        ProjectInfo projectInfo = new ProjectInfo();
+        BeanUtils.copyProperties(project, projectInfo);
+
+        String result = ShellUtil.execSimple("du -sh " + projectRoot + "/" + namespace + "/" + projectPath + ".git/objects");
+        projectInfo.setSize(result.trim().split("\\s")[0]);
+
+        String ref = ShellUtil.execSimple("cat " + projectRoot + "/" + namespace + "/" + projectPath + ".git/refs/heads/master");
+        if (StringUtils.isNotEmpty(ref)) {
+            List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + ref);
+            if (!list.isEmpty()) {
+                String dateStr = list.get(2).substring(6).trim();
+                dateStr = dateStr.substring(dateStr.indexOf(" ")).trim();
+                projectInfo.setLastCommitTime(new SimpleDateFormat("MMM d HH:mm:ss yyyy", Locale.ENGLISH).parse(dateStr));
+            }
+        }
+
+        return projectInfo;
+    }
+
 }

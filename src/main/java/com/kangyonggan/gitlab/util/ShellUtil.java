@@ -1,22 +1,64 @@
 package com.kangyonggan.gitlab.util;
 
-import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author kyg
  */
 public final class ShellUtil {
 
-    private ShellUtil() {}
+    private ShellUtil() {
+    }
 
     /**
-     * 执行简单shell命令
+     * 执行shell命令
      *
      * @param command
-     * @throws IOException
+     * @return
+     * @throws Exception
      */
-    public static void exec(String command) throws IOException {
-        Runtime.getRuntime().exec(command);
+    public static String execSimple(String command) throws Exception {
+        List<String> result = exec(command);
+        return result.isEmpty() ? StringUtils.EMPTY : result.get(0);
+    }
+
+    /**
+     * 执行shell命令
+     *
+     * @param command
+     * @return
+     * @throws Exception
+     */
+    public static List<String> exec(String command) throws Exception {
+        List<String> result = new ArrayList<>();
+        LineNumberReader reader = null;
+        InputStreamReader input = null;
+
+        try {
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
+            input = new InputStreamReader(process.getInputStream());
+            reader = new LineNumberReader(input);
+            String line;
+            process.waitFor();
+            while ((line = reader.readLine()) != null) {
+                result.add(line);
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+            if (input != null) {
+                input.close();
+            }
+        }
+        return result;
     }
 
 }

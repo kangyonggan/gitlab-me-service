@@ -4,10 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.kangyonggan.gitlab.annotation.PermissionAccessLevel;
 import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.controller.BaseController;
-import com.kangyonggan.gitlab.dto.GroupUserDto;
-import com.kangyonggan.gitlab.dto.ProjectRequest;
-import com.kangyonggan.gitlab.dto.ProjectUserDto;
-import com.kangyonggan.gitlab.dto.Response;
+import com.kangyonggan.gitlab.dto.*;
 import com.kangyonggan.gitlab.model.Group;
 import com.kangyonggan.gitlab.model.Project;
 import com.kangyonggan.gitlab.model.User;
@@ -127,12 +124,13 @@ public class AdminProjectsController extends BaseController {
      * @param namespace
      * @param projectPath
      * @return
+     * @throws Exception
      */
     @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/users")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response detailWithUsers(@PathVariable String namespace, @PathVariable String projectPath) {
+    public Response detailWithUsers(@PathVariable String namespace, @PathVariable String projectPath) throws Exception {
         Response response = successResponse();
-        Project project = projectService.findProjectByNamespaceAndPath(namespace, projectPath);
+        ProjectInfo project = projectService.findProjectInfo(namespace, projectPath);
         List<ProjectUserDto> projectUsers = projectUserService.findProjectUsers(project.getId());
 
         Group group = groupService.findGroupByPath(namespace);

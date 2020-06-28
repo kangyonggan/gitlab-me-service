@@ -1,5 +1,6 @@
 package com.kangyonggan.gitlab.service;
 
+import com.kangyonggan.gitlab.dto.ProjectInfo;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.model.Project;
 
@@ -76,4 +77,14 @@ public interface ProjectService {
      * @throws Exception
      */
     void removeProjectByNamespace(String namespace) throws Exception;
+
+    /**
+     * 查找项目信息
+     *
+     * @param namespace
+     * @param projectPath
+     * @return
+     * @throws Exception
+     */
+    ProjectInfo findProjectInfo(String namespace, String projectPath) throws Exception;
 }
