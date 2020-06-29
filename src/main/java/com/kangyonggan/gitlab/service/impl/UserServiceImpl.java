@@ -55,9 +55,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Autowired
     private GroupUserService groupUserService;
 
-    @Value("${gitlab.bin-path}")
-    private String binPath;
-
     @Value("${gitlab.htpasswd-path}")
     private String htpasswdPath;
 
@@ -94,7 +91,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         baseMapper.insertSelective(user);
 
         // 保存htpasswd
-        ShellUtil.exec("sh " + binPath + "/add_htpasswd.sh " + htpasswdPath + " " + user.getUsername() + " " + pwd);
+        ShellUtil.exec("htpasswd -b " + htpasswdPath + "/gitlab.htpasswd " + user.getUsername() + " " + pwd);
     }
 
     @Override
@@ -120,7 +117,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             entryptPassword(user);
 
             // 保存htpasswd
-            ShellUtil.exec("sh " + binPath + "/add_htpasswd.sh " + htpasswdPath + " " + user.getUsername() + " " + pwd);
+            ShellUtil.exec("htpasswd -b " + htpasswdPath + "/gitlab.htpasswd " + user.getUsername() + " " + pwd);
         } else {
             user.setPassword(null);
             user.setSalt(null);
@@ -172,7 +169,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         baseMapper.updateByExampleSelective(user, example);
 
         // 保存htpasswd
-        ShellUtil.exec("sh " + binPath + "/add_htpasswd.sh " + htpasswdPath + " " + user.getUsername() + " " + password);
+        ShellUtil.exec("htpasswd -b " + htpasswdPath + "/gitlab.htpasswd " + user.getUsername() + " " + password);
     }
 
     @Override
@@ -222,8 +219,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         // 项目用户的项目
         projectService.removeProjectByNamespace(user.getUsername());
 
-        // 删除htpasswd
-        ShellUtil.exec("sh " + binPath + "/del_htpasswd.sh " + htpasswdPath + " " + user.getUsername());
+        // 保存htpasswd
+        ShellUtil.exec("htpasswd -D " + htpasswdPath + "/gitlab.htpasswd " + user.getUsername());
     }
 
     @Override

@@ -19,9 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author kyg
@@ -173,20 +172,41 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         ProjectInfo projectInfo = new ProjectInfo();
         BeanUtils.copyProperties(project, projectInfo);
 
-        String result = ShellUtil.execSimple("du -sh " + projectRoot + "/" + namespace + "/" + projectPath + ".git/objects");
-        projectInfo.setSize(result.trim().split("\\s")[0]);
+        // 大小
+        String size = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git count-objects -v").get(1);
+        projectInfo.setSize(Long.parseLong(size.trim().split("\\s")[1]));
 
-        String ref = ShellUtil.execSimple("cat " + projectRoot + "/" + namespace + "/" + projectPath + ".git/refs/heads/master");
-        if (StringUtils.isNotEmpty(ref)) {
-            List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + ref);
-            if (!list.isEmpty()) {
-                String dateStr = list.get(2).substring(6).trim();
-                dateStr = dateStr.substring(dateStr.indexOf(" ")).trim();
-                projectInfo.setLastCommitTime(new SimpleDateFormat("MMM d HH:mm:ss yyyy", Locale.ENGLISH).parse(dateStr));
-            }
+        // 最后提交时间
+        List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log --date=raw -1");
+        if (!list.isEmpty()) {
+            String dateStr = list.get(2).split("\\s")[3];
+            projectInfo.setLastCommitTime(new Date(Long.parseLong(dateStr + "000")));
         }
 
+        // 提交次数
+        String commitNums = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log --oneline | wc -l");
+        projectInfo.setCommitNums(Integer.parseInt(commitNums.trim()));
+
+        // 分支
+        List<String> branches = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git branch");
+        projectInfo.setBranches(formatBranches(branches));
+
+        // 标签
+        List<String> tags = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git tag");
+        projectInfo.setTags(tags);
+
         return projectInfo;
+    }
+
+    private List<String> formatBranches(List<String> branches) {
+        for (int i = 0; i < branches.size(); i++) {
+            String branch = branches.get(i).trim();
+            if (branch.startsWith("*")) {
+                branch = branch.substring(1).trim();
+            }
+            branches.set(i, branch);
+        }
+        return branches;
     }
 
 }
