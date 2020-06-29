@@ -10,7 +10,7 @@ spring:
 
 gitlab:
   bin-path: /home/ubuntu/code/gitlab-me-service/src/main/resources/bin
-  project-root: /home/ubuntu//code/repo
+  project-root: /home/ubuntu/code/repo
   htpasswd-path: /etc/nginx/
 
 app:
