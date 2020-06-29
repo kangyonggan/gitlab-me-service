@@ -19,8 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author kyg
@@ -179,8 +180,13 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         // 最后提交时间
         List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log --date=raw -1");
         if (!list.isEmpty()) {
-            String dateStr = list.get(2).split("\\s")[3];
-            projectInfo.setLastCommitTime(new Date(Long.parseLong(dateStr + "000")));
+            Map<String, Object> lastCommit = new HashMap<>(8);
+            lastCommit.put("commitId", list.get(0).trim().split("\\s+")[1]);
+            lastCommit.put("username", list.get(1).trim().split("\\s+")[1]);
+            lastCommit.put("email", list.get(1).trim().split("\\s+")[2].replace("<", "").replace(">", ""));
+            lastCommit.put("date", list.get(2).trim().split("\\s+")[1] + "000");
+            lastCommit.put("msg", list.get(4).trim());
+            projectInfo.setLastCommit(lastCommit);
         }
 
         // 提交次数

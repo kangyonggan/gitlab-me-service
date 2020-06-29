@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author kyg
@@ -19,9 +20,9 @@ public class ProjectInfo extends Project implements Serializable {
     private Long size;
 
     /**
-     * 最后提交时间
+     * 最后一次提交
      */
-    private Date lastCommitTime;
+    private Map<String, Object> lastCommit;
 
     /**
      * 分支
