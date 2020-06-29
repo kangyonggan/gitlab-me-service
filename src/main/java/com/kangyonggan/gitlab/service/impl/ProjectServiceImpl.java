@@ -4,6 +4,7 @@ import com.kangyonggan.gitlab.annotation.MethodLog;
 import com.kangyonggan.gitlab.constants.Access;
 import com.kangyonggan.gitlab.dto.ProjectInfo;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
+import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.model.Project;
 import com.kangyonggan.gitlab.model.ProjectUser;
 import com.kangyonggan.gitlab.service.BaseService;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -202,6 +204,39 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         projectInfo.setTags(tags);
 
         return projectInfo;
+    }
+
+    @Override
+    @MethodLog
+    public List<TreeInfo> getProjectTree(String namespace, String projectPath, String branch, String fullPath) throws Exception {
+        // TODO branch
+        List<TreeInfo> treeInfos = new ArrayList<>();
+        Project project = findProjectByNamespaceAndPath(namespace, projectPath);
+        List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l HEAD " + fullPath);
+        for (String line : list) {
+            // line look like: 100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	service/2.txt
+            String[] arr = line.split("\\s+");
+            TreeInfo treeInfo = new TreeInfo();
+            treeInfo.setType(arr[1]);
+            treeInfo.setIsh(arr[2]);
+            if (!"-".equals(arr[3])) {
+                treeInfo.setSize(Long.parseLong(arr[3]));
+            }
+            treeInfo.setFullName(arr[4]);
+
+            // last commit
+            List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log --date=raw -1 -- " + treeInfo.getFullName());
+            if (!lastCommit.isEmpty()) {
+                Map<String, Object> map = new HashMap<>(8);
+                map.put("commitId", lastCommit.get(0).trim().split("\\s+")[1]);
+                map.put("date", lastCommit.get(2).trim().split("\\s+")[1] + "000");
+                map.put("msg", lastCommit.get(4).trim());
+                treeInfo.setLastCommit(map);
+            }
+
+            treeInfos.add(treeInfo);
+        }
+        return treeInfos;
     }
 
     private List<String> formatBranches(List<String> branches) {

@@ -2,6 +2,7 @@ package com.kangyonggan.gitlab.service;
 
 import com.kangyonggan.gitlab.dto.ProjectInfo;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
+import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.model.Project;
 
 import java.util.List;
@@ -87,4 +88,16 @@ public interface ProjectService {
      * @throws Exception
      */
     ProjectInfo findProjectInfo(String namespace, String projectPath) throws Exception;
+
+    /**
+     * 获取项目树
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branch
+     * @param fullPath
+     * @return
+     * @throws Exception
+     */
+    List<TreeInfo> getProjectTree(String namespace, String projectPath, String branch, String fullPath) throws Exception;
 }
