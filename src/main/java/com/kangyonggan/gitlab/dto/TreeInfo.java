@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * 项目树信息
+ * 目录信息
  *
  * @author kyg
  */

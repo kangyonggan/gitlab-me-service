@@ -2,6 +2,7 @@ package com.kangyonggan.gitlab.service.impl;
 
 import com.kangyonggan.gitlab.annotation.MethodLog;
 import com.kangyonggan.gitlab.constants.Access;
+import com.kangyonggan.gitlab.dto.BlobInfo;
 import com.kangyonggan.gitlab.dto.ProjectInfo;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.dto.TreeInfo;
@@ -10,6 +11,7 @@ import com.kangyonggan.gitlab.model.ProjectUser;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.ProjectUserService;
+import com.kangyonggan.gitlab.util.Encodes;
 import com.kangyonggan.gitlab.util.ShellUtil;
 import com.kangyonggan.gitlab.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -227,7 +229,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
             if (!"-".equals(arr[3])) {
                 treeInfo.setSize(Long.parseLong(arr[3]));
             }
-            treeInfo.setFullName(arr[4]);
+            treeInfo.setFullName(Encodes.decodeOct(arr[4].replaceAll("\"", "")));
 
             // last commit
             // git log dev-kyg -1 -- service/2.txt
@@ -243,6 +245,28 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
             treeInfos.add(treeInfo);
         }
         return treeInfos;
+    }
+
+    @Override
+    @MethodLog
+    public BlobInfo getProjectBlob(String namespace, String projectPath, String branch, String fullPath) throws Exception {
+        BlobInfo blobInfo = new BlobInfo();
+        blobInfo.setFullName(fullPath);
+        Project project = findProjectByNamespaceAndPath(namespace, projectPath);
+
+        // 文件内容
+        List<String> contents = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show " + branch + ":" + fullPath);
+        StringBuilder content = new StringBuilder();
+        for (String line : contents) {
+            content.append(line).append("\r\n");
+        }
+        if (content.length() > 0) {
+            content.deleteCharAt(content.lastIndexOf("\n"));
+            content.deleteCharAt(content.lastIndexOf("\r"));
+        }
+        blobInfo.setContent(content.toString());
+
+        return blobInfo;
     }
 
     private List<String> formatBranches(List<String> branches) {

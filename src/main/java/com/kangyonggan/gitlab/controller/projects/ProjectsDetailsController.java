@@ -3,6 +3,7 @@ package com.kangyonggan.gitlab.controller.projects;
 import com.kangyonggan.gitlab.annotation.PermissionAccessLevel;
 import com.kangyonggan.gitlab.constants.AccessLevel;
 import com.kangyonggan.gitlab.controller.BaseController;
+import com.kangyonggan.gitlab.dto.BlobInfo;
 import com.kangyonggan.gitlab.dto.ProjectInfo;
 import com.kangyonggan.gitlab.dto.Response;
 import com.kangyonggan.gitlab.dto.TreeInfo;
@@ -23,7 +24,7 @@ public class ProjectsDetailsController extends BaseController {
     private ProjectService projectService;
 
     /**
-     * 项目详情
+     * 目录详情
      *
      * @param namespace
      * @param projectPath
@@ -32,9 +33,9 @@ public class ProjectsDetailsController extends BaseController {
      * @return
      * @throws Exception
      */
-    @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}")
+    @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/tree")
     @PermissionAccessLevel(AccessLevel.Admin)
-    public Response details(@PathVariable String namespace, @PathVariable String projectPath,
+    public Response tree(@PathVariable String namespace, @PathVariable String projectPath,
                             @RequestParam(required = false, defaultValue = "master") String branch,
                             @RequestParam(required = false, defaultValue = "./") String fullPath) throws Exception {
         Response response = successResponse();
@@ -43,6 +44,30 @@ public class ProjectsDetailsController extends BaseController {
 
         response.put("project", project);
         response.put("treeInfos", treeInfos);
+        return response;
+    }
+
+    /**
+     * 文件详情
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branch
+     * @param fullPath
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/blob")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response blob(@PathVariable String namespace, @PathVariable String projectPath,
+                            @RequestParam(required = false, defaultValue = "master") String branch,
+                            @RequestParam String fullPath) throws Exception {
+        Response response = successResponse();
+        ProjectInfo project = projectService.findProjectInfo(namespace, projectPath, branch);
+        BlobInfo blobInfo = projectService.getProjectBlob(namespace, projectPath, branch, fullPath);
+
+        response.put("project", project);
+        response.put("blobInfo", blobInfo);
         return response;
     }
 

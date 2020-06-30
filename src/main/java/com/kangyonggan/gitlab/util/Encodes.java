@@ -4,6 +4,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.net.util.Base64;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -54,6 +55,35 @@ public final class Encodes {
         } catch (DecoderException e) {
             throw Exceptions.unchecked(e);
         }
+    }
+
+    /**
+     * 解析八进制字符串
+     *
+     * @param str
+     * @return
+     */
+    public static String decodeOct(String str) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch == '\\') {
+                int sum = 0;
+                int base = 64;
+                for (int j = i + 1; j < i + 4; j++) {
+                    sum += base * (str.charAt(j) - '0');
+                    base /= 8;
+                }
+                if (sum >= 128) {
+                    sum = sum - 256;
+                }
+                out.write(sum);
+                i += 3;
+            } else {
+                out.write(ch);
+            }
+        }
+        return new String(out.toByteArray());
     }
 
     /**

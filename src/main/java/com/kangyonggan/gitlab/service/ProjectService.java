@@ -1,5 +1,6 @@
 package com.kangyonggan.gitlab.service;
 
+import com.kangyonggan.gitlab.dto.BlobInfo;
 import com.kangyonggan.gitlab.dto.ProjectInfo;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.dto.TreeInfo;
@@ -91,7 +92,7 @@ public interface ProjectService {
     ProjectInfo findProjectInfo(String namespace, String projectPath, String branch) throws Exception;
 
     /**
-     * 获取项目树
+     * 获取目录
      *
      * @param namespace
      * @param projectPath
@@ -101,4 +102,16 @@ public interface ProjectService {
      * @throws Exception
      */
     List<TreeInfo> getProjectTree(String namespace, String projectPath, String branch, String fullPath) throws Exception;
+
+    /**
+     * 获取文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branch
+     * @param fullPath
+     * @return
+     * @throws Exception
+     */
+    BlobInfo getProjectBlob(String namespace, String projectPath, String branch, String fullPath) throws Exception;
 }
