@@ -255,16 +255,8 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         Project project = findProjectByNamespaceAndPath(namespace, projectPath);
 
         // 文件内容
-        List<String> contents = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show " + branch + ":" + fullPath);
-        StringBuilder content = new StringBuilder();
-        for (String line : contents) {
-            content.append(line).append("\r\n");
-        }
-        if (content.length() > 0) {
-            content.deleteCharAt(content.lastIndexOf("\n"));
-            content.deleteCharAt(content.lastIndexOf("\r"));
-        }
-        blobInfo.setContent(content.toString());
+        String content = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show " + branch + ":" + fullPath);
+        blobInfo.setContent(content);
 
         return blobInfo;
     }

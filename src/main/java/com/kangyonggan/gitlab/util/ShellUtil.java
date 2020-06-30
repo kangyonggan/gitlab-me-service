@@ -1,7 +1,7 @@
 package com.kangyonggan.gitlab.util;
 
-import org.apache.commons.lang3.StringUtils;
-
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
@@ -23,8 +23,25 @@ public final class ShellUtil {
      * @throws Exception
      */
     public static String execSimple(String command) throws Exception {
-        List<String> result = exec(command);
-        return result.isEmpty() ? StringUtils.EMPTY : result.get(0);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        InputStream input = null;
+        byte[] buff = new byte[2048];
+        int len;
+        try {
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
+            input = process.getInputStream();
+            process.waitFor();
+            while ((len = input.read(buff)) != -1) {
+                out.write(buff, 0, len);
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (input != null) {
+                input.close();
+            }
+        }
+        return new String(out.toByteArray());
     }
 
     /**
