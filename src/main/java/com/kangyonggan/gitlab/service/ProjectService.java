@@ -84,10 +84,11 @@ public interface ProjectService {
      *
      * @param namespace
      * @param projectPath
+     * @param branch
      * @return
      * @throws Exception
      */
-    ProjectInfo findProjectInfo(String namespace, String projectPath) throws Exception;
+    ProjectInfo findProjectInfo(String namespace, String projectPath, String branch) throws Exception;
 
     /**
      * 获取项目树

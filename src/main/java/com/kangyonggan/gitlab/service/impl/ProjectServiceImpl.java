@@ -170,17 +170,19 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
     @Override
     @MethodLog
-    public ProjectInfo findProjectInfo(String namespace, String projectPath) throws Exception {
+    public ProjectInfo findProjectInfo(String namespace, String projectPath, String branch) throws Exception {
         Project project = findProjectByNamespaceAndPath(namespace, projectPath);
         ProjectInfo projectInfo = new ProjectInfo();
         BeanUtils.copyProperties(project, projectInfo);
 
         // 大小
+        // git count-objects -v
         String size = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git count-objects -v").get(1);
         projectInfo.setSize(Long.parseLong(size.trim().split("\\s")[1]));
 
         // 最后提交时间
-        List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log --date=raw -1");
+        // git log master --date=raw -1
+        List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + branch + " --date=raw -1");
         if (!list.isEmpty()) {
             Map<String, Object> lastCommit = new HashMap<>(8);
             lastCommit.put("commitId", list.get(0).trim().split("\\s+")[1]);
@@ -192,14 +194,17 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         }
 
         // 提交次数
-        String commitNums = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log --oneline | wc -l");
+        // git log master --oneline | wc -l
+        String commitNums = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + branch + " --oneline | wc -l");
         projectInfo.setCommitNums(Integer.parseInt(commitNums.trim()));
 
         // 分支
+        // git branch
         List<String> branches = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git branch");
         projectInfo.setBranches(formatBranches(branches));
 
         // 标签
+        // git tag
         List<String> tags = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git tag");
         projectInfo.setTags(tags);
 
@@ -209,10 +214,10 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     public List<TreeInfo> getProjectTree(String namespace, String projectPath, String branch, String fullPath) throws Exception {
-        // TODO branch
         List<TreeInfo> treeInfos = new ArrayList<>();
         Project project = findProjectByNamespaceAndPath(namespace, projectPath);
-        List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l HEAD " + fullPath);
+        // git ls-tree -l master HEAD service/2.txt
+        List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l " + branch + " HEAD " + fullPath);
         for (String line : list) {
             // line look like: 100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	service/2.txt
             String[] arr = line.split("\\s+");
@@ -225,7 +230,8 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
             treeInfo.setFullName(arr[4]);
 
             // last commit
-            List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log --date=raw -1 -- " + treeInfo.getFullName());
+            // git log dev-kyg -1 -- service/2.txt
+            List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log " + branch + " --date=raw -1 -- " + treeInfo.getFullName());
             if (!lastCommit.isEmpty()) {
                 Map<String, Object> map = new HashMap<>(8);
                 map.put("commitId", lastCommit.get(0).trim().split("\\s+")[1]);

@@ -130,7 +130,7 @@ public class AdminProjectsController extends BaseController {
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response detailWithUsers(@PathVariable String namespace, @PathVariable String projectPath) throws Exception {
         Response response = successResponse();
-        ProjectInfo project = projectService.findProjectInfo(namespace, projectPath);
+        ProjectInfo project = projectService.findProjectInfo(namespace, projectPath, "master");
         List<ProjectUserDto> projectUsers = projectUserService.findProjectUsers(project.getId());
 
         Group group = groupService.findGroupByPath(namespace);
