@@ -258,6 +258,15 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         String content = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show " + branch + ":" + fullPath);
         blobInfo.setContent(content);
 
+        // 文件属性
+        String line = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l " + branch + " HEAD " + fullPath);
+        // line look like: 100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	service/2.txt
+        String[] arr = line.split("\\s+");
+        blobInfo.setIsh(arr[2]);
+        if (!"-".equals(arr[3])) {
+            blobInfo.setSize(Long.parseLong(arr[3]));
+        }
+
         return blobInfo;
     }
 

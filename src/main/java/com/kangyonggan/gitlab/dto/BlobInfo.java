@@ -13,9 +13,19 @@ import java.io.Serializable;
 public class BlobInfo implements Serializable {
 
     /**
-     * 文件全名
+     * tree-ish（类似文件ID）
+     */
+    private String ish;
+
+    /**
+     * 全名
      */
     private String fullName;
+
+    /**
+     * 大小（byte）
+     */
+    private Long size;
 
     /**
      * 内容
