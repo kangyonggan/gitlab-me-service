@@ -109,4 +109,22 @@ public class ProjectsDetailsController extends BaseController {
         }
     }
 
+    /**
+     * 创建分支
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param createFrom
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/branch")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response branch(@PathVariable String namespace, @PathVariable String projectPath,
+                        @RequestParam String branchName, @RequestParam String createFrom) throws Exception {
+        projectService.newBranch(namespace, projectPath, branchName, createFrom);
+        return successResponse();
+    }
+
 }

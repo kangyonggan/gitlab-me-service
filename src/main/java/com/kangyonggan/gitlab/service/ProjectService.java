@@ -127,4 +127,15 @@ public interface ProjectService {
      * @throws Exception
      */
     Map<String, Object> getLastCommit(String namespace, String projectPath, String branch, String fullPath) throws Exception;
+
+    /**
+     * 创建分支
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param createFrom
+     * @throws Exception
+     */
+    void newBranch(String namespace, String projectPath, String branchName, String createFrom) throws Exception;
 }

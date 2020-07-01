@@ -293,6 +293,15 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         return null;
     }
 
+    @Override
+    @MethodLog
+    public void newBranch(String namespace, String projectPath, String branchName, String createFrom) throws Exception {
+        String msg = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git branch " + branchName + " " + createFrom);
+        if (StringUtils.isNotEmpty(msg)) {
+            throw new RuntimeException(msg);
+        }
+    }
+
     private List<String> formatBranches(List<String> branches) {
         for (int i = 0; i < branches.size(); i++) {
             String branch = branches.get(i).trim();
