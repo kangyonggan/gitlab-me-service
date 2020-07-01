@@ -267,6 +267,17 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
             blobInfo.setSize(Long.parseLong(arr[3]));
         }
 
+        // last commit
+        // git log dev-kyg -1 -- service/2.txt
+        List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log " + branch + " --date=raw -1 -- " + fullPath);
+        if (!lastCommit.isEmpty()) {
+            Map<String, Object> map = new HashMap<>(8);
+            map.put("commitId", lastCommit.get(0).trim().split("\\s+")[1]);
+            map.put("date", lastCommit.get(2).trim().split("\\s+")[1] + "000");
+            map.put("msg", lastCommit.get(4).trim());
+            blobInfo.setLastCommit(map);
+        }
+
         return blobInfo;
     }
 

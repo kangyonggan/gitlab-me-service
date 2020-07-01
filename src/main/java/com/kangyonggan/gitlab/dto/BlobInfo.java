@@ -3,6 +3,7 @@ package com.kangyonggan.gitlab.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 文件信息
@@ -31,4 +32,9 @@ public class BlobInfo implements Serializable {
      * 内容
      */
     private String content;
+
+    /**
+     * 最后一次提交
+     */
+    private Map<String, Object> lastCommit;
 }
