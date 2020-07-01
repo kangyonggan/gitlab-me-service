@@ -21,6 +21,7 @@ import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author kyg
@@ -53,9 +54,11 @@ public class ProjectsDetailsController extends BaseController {
         Response response = successResponse();
         ProjectInfo project = projectService.findProjectInfo(namespace, projectPath, branch);
         List<TreeInfo> treeInfos = projectService.getProjectTree(namespace, projectPath, branch, fullPath);
+        Map<String, Object> lastCommit = projectService.getLastCommit(namespace, projectPath, branch, fullPath);
 
         response.put("project", project);
         response.put("treeInfos", treeInfos);
+        response.put("lastCommit", lastCommit);
         return response;
     }
 
@@ -93,7 +96,6 @@ public class ProjectsDetailsController extends BaseController {
      * @throws Exception
      */
     @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/raw")
-    @PermissionAccessLevel(AccessLevel.Admin)
     public void raw(@PathVariable String namespace, @PathVariable String projectPath,
                     @RequestParam(required = false, defaultValue = "master") String branch,
                     @RequestParam String fullPath) throws Exception {

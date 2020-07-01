@@ -7,6 +7,7 @@ import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.model.Project;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author kyg
@@ -115,4 +116,15 @@ public interface ProjectService {
      */
     BlobInfo getProjectBlob(String namespace, String projectPath, String branch, String fullPath) throws Exception;
 
+    /**
+     * 获取最近提交
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branch
+     * @param fullPath
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> getLastCommit(String namespace, String projectPath, String branch, String fullPath) throws Exception;
 }

@@ -272,17 +272,25 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         }
 
         // last commit
+        blobInfo.setLastCommit(getLastCommit(namespace, projectPath, branch, fullPath));
+
+        return blobInfo;
+    }
+
+    @Override
+    @MethodLog
+    public Map<String, Object> getLastCommit(String namespace, String projectPath, String branch, String fullPath) throws Exception {
         // git log dev-kyg -1 -- service/2.txt
-        List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log " + branch + " --date=raw -1 -- " + fullPath);
+        List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + branch + " --date=raw -1 -- " + fullPath);
         if (!lastCommit.isEmpty()) {
-            Map<String, Object> map = new HashMap<>(8);
+            Map<String, Object> map = new HashMap<>(4);
             map.put("commitId", lastCommit.get(0).trim().split("\\s+")[1]);
             map.put("date", lastCommit.get(2).trim().split("\\s+")[1] + "000");
             map.put("msg", lastCommit.get(4).trim());
-            blobInfo.setLastCommit(map);
-        }
 
-        return blobInfo;
+            return map;
+        }
+        return null;
     }
 
     private List<String> formatBranches(List<String> branches) {
