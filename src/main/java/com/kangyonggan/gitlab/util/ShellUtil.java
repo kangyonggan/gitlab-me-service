@@ -23,14 +23,23 @@ public final class ShellUtil {
      * @throws Exception
      */
     public static String execSimple(String command) throws Exception {
+        return new String(execByte(command));
+    }
+
+    /**
+     * 执行shell命令
+     *
+     * @param command
+     * @return
+     * @throws Exception
+     */
+    public static byte[] execByte(String command) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         InputStream input = null;
         byte[] buff = new byte[2048];
         int len;
         try {
-            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
-            input = process.getInputStream();
-            process.waitFor();
+            input = execStream(command);
             while ((len = input.read(buff)) != -1) {
                 out.write(buff, 0, len);
             }
@@ -41,7 +50,19 @@ public final class ShellUtil {
                 input.close();
             }
         }
-        return new String(out.toByteArray());
+        return out.toByteArray();
+    }
+
+    /**
+     * 执行shell命令
+     *
+     * @param command
+     * @return
+     * @throws Exception
+     */
+    public static InputStream execStream(String command) throws Exception {
+        Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
+        return process.getInputStream();
     }
 
     /**

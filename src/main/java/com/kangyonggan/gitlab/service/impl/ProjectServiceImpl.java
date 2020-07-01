@@ -14,6 +14,7 @@ import com.kangyonggan.gitlab.service.ProjectUserService;
 import com.kangyonggan.gitlab.util.Encodes;
 import com.kangyonggan.gitlab.util.ShellUtil;
 import com.kangyonggan.gitlab.util.StringUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -254,17 +255,20 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         blobInfo.setFullName(fullPath);
         Project project = findProjectByNamespaceAndPath(namespace, projectPath);
 
-        // 文件内容
-        String content = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show " + branch + ":" + fullPath);
-        blobInfo.setContent(content);
-
         // 文件属性
         String line = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l " + branch + " HEAD " + fullPath);
         // line look like: 100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	service/2.txt
         String[] arr = line.split("\\s+");
         blobInfo.setIsh(arr[2]);
-        if (!"-".equals(arr[3])) {
-            blobInfo.setSize(Long.parseLong(arr[3]));
+        blobInfo.setSize(Long.parseLong(arr[3]));
+
+        // 文件内容
+        String ext = FilenameUtils.getExtension(fullPath).toUpperCase();
+        // 只读取常见类型的文件内容，并且文件要小于2M，否则就去下载吧
+        if ("MD,TXT,XML,YML,PROPERTIES,GITIGNORE,SQL,SH,JAVA,JS,CSS,JSON,HTML".contains(ext)
+                && blobInfo.getSize() < 2097152) {
+            String content = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show " + branch + ":" + fullPath);
+            blobInfo.setContent(content);
         }
 
         // last commit

@@ -114,4 +114,5 @@ public interface ProjectService {
      * @throws Exception
      */
     BlobInfo getProjectBlob(String namespace, String projectPath, String branch, String fullPath) throws Exception;
+
 }

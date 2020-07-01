@@ -3,6 +3,7 @@ package com.kangyonggan.gitlab.interceptor;
 import com.kangyonggan.gitlab.constants.AppConstants;
 import com.kangyonggan.gitlab.model.User;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -85,7 +86,11 @@ public class ParamsInterceptor extends HandlerInterceptorAdapter {
      * @return
      */
     public static String getToken() {
-        return currentRequest.get().getHeader(AppConstants.HEADER_TOKEN_NAME);
+        String token = currentRequest.get().getHeader(AppConstants.HEADER_TOKEN_NAME);
+        if (StringUtils.isEmpty(token)) {
+            token = currentRequest.get().getParameter(AppConstants.HEADER_TOKEN_NAME);
+        }
+        return token;
     }
 
     /**
