@@ -9,12 +9,12 @@ spring:
     password: 123456
 
 gitlab:
-  bin-path: /home/ubuntu/code/gitlab-me-service/src/main/resources/bin
-  project-root: /home/ubuntu/code/repo
+  bin-path: /srv/code/gitlab-me-service/src/main/resources/bin
+  project-root: /srv/code/repo
   htpasswd-path: /etc/nginx/
 
 app:
-  file-upload: /home/ubuntu/data/gitlab/upload/
+  file-upload: /srv/data/gitlab/upload/
   email:
     host: smtp.exmail.qq.com
     port: 465
