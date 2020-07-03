@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public final class ShellUtil {
      * @throws Exception
      */
     public static String execSimple(String command) throws Exception {
-        return new String(execByte(command));
+        return new String(execByte(command), StandardCharsets.UTF_8);
     }
 
     /**
@@ -79,7 +80,7 @@ public final class ShellUtil {
 
         try {
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
-            input = new InputStreamReader(process.getInputStream());
+            input = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
             reader = new LineNumberReader(input);
             String line;
             process.waitFor();
