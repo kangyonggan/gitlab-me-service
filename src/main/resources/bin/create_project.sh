@@ -11,3 +11,6 @@ then
 fi
 
 git init --bare ${2}/${3}.git
+
+# clone
+git clone "${2}/${3}.git" "${2}/${3}.git/worktree"

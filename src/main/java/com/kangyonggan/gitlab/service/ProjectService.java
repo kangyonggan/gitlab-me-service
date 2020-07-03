@@ -5,6 +5,7 @@ import com.kangyonggan.gitlab.dto.ProjectInfo;
 import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.model.Project;
+import com.kangyonggan.gitlab.model.User;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public interface ProjectService {
     List<Project> searchProjects(ProjectRequest request);
 
     /**
-     * 保持项目
+     * 创建项目
      *
      * @param project
      * @param userId
@@ -138,4 +139,18 @@ public interface ProjectService {
      * @throws Exception
      */
     void newBranch(String namespace, String projectPath, String branchName, String createFrom) throws Exception;
+
+    /**
+     * 创建目录
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param parentPath
+     * @param directoryName
+     * @param commitMessage
+     * @param user
+     * @throws Exception
+     */
+    void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception;
 }

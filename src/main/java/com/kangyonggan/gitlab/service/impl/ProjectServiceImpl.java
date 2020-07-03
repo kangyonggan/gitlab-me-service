@@ -8,6 +8,7 @@ import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.model.Project;
 import com.kangyonggan.gitlab.model.ProjectUser;
+import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.ProjectUserService;
@@ -280,11 +281,12 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     public Map<String, Object> getLastCommit(String namespace, String projectPath, String branch, String fullPath) throws Exception {
-        // git log dev-kyg -1 -- service/2.txt
+        // git log dev-kyg --date=raw -1 -- service/2.txt
         List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + branch + " --date=raw -1 -- " + fullPath);
         if (!lastCommit.isEmpty()) {
             Map<String, Object> map = new HashMap<>(4);
             map.put("commitId", lastCommit.get(0).trim().split("\\s+")[1]);
+            map.put("author", lastCommit.get(1).trim().split("\\s+")[1]);
             map.put("date", lastCommit.get(2).trim().split("\\s+")[1] + "000");
             map.put("msg", lastCommit.get(4).trim());
 
@@ -297,6 +299,16 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @MethodLog
     public void newBranch(String namespace, String projectPath, String branchName, String createFrom) throws Exception {
         String msg = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git branch " + branchName + " " + createFrom);
+        if (StringUtils.isNotEmpty(msg)) {
+            throw new RuntimeException(msg);
+        }
+    }
+
+    @Override
+    @MethodLog
+    public void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception {
+        String msg = ShellUtil.execSimple("sh " + binPath + "/new_dir.sh " + projectRoot + " " + namespace + " " + projectPath + " " + branchName + " "
+                + parentPath + " " + directoryName + " " + commitMessage + " " + user.getUsername() + " " + user.getEmail());
         if (StringUtils.isNotEmpty(msg)) {
             throw new RuntimeException(msg);
         }
