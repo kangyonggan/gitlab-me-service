@@ -308,7 +308,8 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     public void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception {
-        String msg = ShellUtil.execSimple("sh " + binPath + "/new_dir.sh", projectRoot, namespace, projectPath, branchName, commitMessage, user.getUsername(), user.getEmail());
+        String msg = ShellUtil.execSimple("sh " + binPath + "/new_dir.sh", projectRoot, namespace, projectPath, branchName,
+                parentPath, directoryName, commitMessage, user.getUsername(), user.getEmail());
         log.info(msg);
     }
 
