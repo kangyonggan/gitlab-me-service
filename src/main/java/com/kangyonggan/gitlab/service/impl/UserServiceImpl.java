@@ -91,7 +91,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         baseMapper.insertSelective(user);
 
         // 保存htpasswd
-        ShellUtil.exec("htpasswd -b " + htpasswdPath + "/gitlab.htpasswd " + user.getUsername() + " " + pwd);
+        ShellUtil.exec("htpasswd -b", htpasswdPath + "/gitlab.htpasswd", user.getUsername(), pwd);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             entryptPassword(user);
 
             // 保存htpasswd
-            ShellUtil.exec("htpasswd -b " + htpasswdPath + "/gitlab.htpasswd " + user.getUsername() + " " + pwd);
+            ShellUtil.exec("htpasswd -b", htpasswdPath + "/gitlab.htpasswd", user.getUsername(), pwd);
         } else {
             user.setPassword(null);
             user.setSalt(null);
@@ -169,7 +169,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         baseMapper.updateByExampleSelective(user, example);
 
         // 保存htpasswd
-        ShellUtil.exec("htpasswd -b " + htpasswdPath + "/gitlab.htpasswd " + user.getUsername() + " " + password);
+        ShellUtil.exec("htpasswd -b", htpasswdPath + "/gitlab.htpasswd", user.getUsername(), password);
     }
 
     @Override
@@ -220,7 +220,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         projectService.removeProjectByNamespace(user.getUsername());
 
         // 保存htpasswd
-        ShellUtil.exec("htpasswd -D " + htpasswdPath + "/gitlab.htpasswd " + user.getUsername());
+        ShellUtil.exec("htpasswd -D", htpasswdPath + "/gitlab.htpasswd", user.getUsername());
     }
 
     @Override

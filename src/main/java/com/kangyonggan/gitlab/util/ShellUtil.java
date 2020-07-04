@@ -31,16 +31,46 @@ public final class ShellUtil {
      * 执行shell命令
      *
      * @param command
+     * @param args
      * @return
      * @throws Exception
      */
-    public static byte[] execByte(String command) throws Exception {
+    public static String execSimple(String command, String... args) throws Exception {
+        return new String(execByte(command + buildArgs(args)), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 构建参数
+     *
+     * @param args
+     * @return
+     */
+    private static String buildArgs(String... args) {
+        if (args == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < args.length; i++) {
+            sb.append(" '").append(args[i]).append("' ");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 执行shell命令
+     *
+     * @param command
+     * @param args
+     * @return
+     * @throws Exception
+     */
+    public static byte[] execByte(String command, String... args) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         InputStream input = null;
         byte[] buff = new byte[2048];
         int len;
         try {
-            input = execStream(command);
+            input = execStream(command + buildArgs(args));
             while ((len = input.read(buff)) != -1) {
                 out.write(buff, 0, len);
             }
@@ -58,11 +88,12 @@ public final class ShellUtil {
      * 执行shell命令
      *
      * @param command
+     * @param args
      * @return
      * @throws Exception
      */
-    public static InputStream execStream(String command) throws Exception {
-        Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
+    public static InputStream execStream(String command, String... args) throws Exception {
+        Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command + buildArgs(args)}, null, null);
         return process.getInputStream();
     }
 
@@ -70,16 +101,17 @@ public final class ShellUtil {
      * 执行shell命令
      *
      * @param command
+     * @param args
      * @return
      * @throws Exception
      */
-    public static List<String> exec(String command) throws Exception {
+    public static List<String> exec(String command, String... args) throws Exception {
         List<String> result = new ArrayList<>();
         LineNumberReader reader = null;
         InputStreamReader input = null;
 
         try {
-            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command + buildArgs(args)}, null, null);
             input = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
             reader = new LineNumberReader(input);
             String line;
