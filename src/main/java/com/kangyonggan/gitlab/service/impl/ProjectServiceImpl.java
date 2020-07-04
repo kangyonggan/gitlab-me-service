@@ -8,6 +8,7 @@ import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.model.Project;
 import com.kangyonggan.gitlab.model.ProjectUser;
+import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.ProjectUserService;
@@ -303,6 +304,14 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         if (StringUtils.isNotEmpty(msg)) {
             throw new RuntimeException(msg);
         }
+    }
+
+    @Override
+    @MethodLog
+    public void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception {
+        String msg = ShellUtil.execSimple("sh " + binPath + "/new_dir.sh " + projectRoot + " " + namespace + " " + projectPath + " " + branchName + " "
+                + parentPath + " " + directoryName + " " + commitMessage + " " + user.getUsername() + " " + user.getEmail());
+        log.info(msg);
     }
 
     private List<String> formatBranches(List<String> branches) {
