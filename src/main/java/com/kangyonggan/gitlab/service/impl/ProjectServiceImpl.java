@@ -310,7 +310,9 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     public void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception {
         String msg = ShellUtil.execSimple("sh " + binPath + "/new_dir.sh", projectRoot, namespace, projectPath, branchName,
                 parentPath, directoryName, commitMessage, user.getUsername(), user.getEmail());
-        log.info(msg);
+        if (StringUtils.isNotEmpty(msg)) {
+            throw new RuntimeException(msg);
+        }
     }
 
     private List<String> formatBranches(List<String> branches) {
