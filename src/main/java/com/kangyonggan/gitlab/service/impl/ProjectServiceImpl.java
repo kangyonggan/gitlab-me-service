@@ -82,7 +82,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         projectUserService.saveProjectUser(projectUser);
 
         // 创建项目
-        ShellUtil.exec("sh", binPath + "/create_project.sh", projectRoot, project.getNamespace(), project.getProjectPath());
+        ShellUtil.exec("sh " + binPath + "/create_project.sh", projectRoot, project.getNamespace(), project.getProjectPath());
     }
 
     @Override
@@ -115,7 +115,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
             }
 
             // 移动项目
-            ShellUtil.exec("sh" + binPath + "/move_project.sh", projectRoot, oldProject.getNamespace(), oldProject.getProjectPath(), newNamespace, newProjectPath);
+            ShellUtil.exec("sh " + binPath + "/move_project.sh", projectRoot, oldProject.getNamespace(), oldProject.getProjectPath(), newNamespace, newProjectPath);
         }
     }
 
@@ -130,7 +130,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         projectUserService.removeProjectUsers(id);
 
         // 删除项目
-        ShellUtil.exec("sh", binPath + "/del_project.sh", projectRoot, project.getNamespace(), project.getProjectPath());
+        ShellUtil.exec("sh " + binPath + "/del_project.sh", projectRoot, project.getNamespace(), project.getProjectPath());
 
     }
 
@@ -155,7 +155,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         baseMapper.updateByExampleSelective(project, example);
 
         // 转移命名空间
-        ShellUtil.exec("sh", binPath + "/move_namespace.sh", projectRoot, oldNamespace, namespace);
+        ShellUtil.exec("sh " + binPath + "/move_namespace.sh", projectRoot, oldNamespace, namespace);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         baseMapper.delete(project);
 
         // 删除命名空间下的项目
-        ShellUtil.exec("sh", binPath + "/del_project.sh", projectRoot, namespace);
+        ShellUtil.exec("sh " + binPath + "/del_project.sh", projectRoot, namespace);
     }
 
     @Override
@@ -182,12 +182,12 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
         // 大小
         // git count-objects -v
-        String size = ShellUtil.exec("git --git-dir", projectRoot + "/" + namespace + "/" + projectPath + ".git count-objects -v").get(1);
+        String size = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git count-objects -v").get(1);
         projectInfo.setSize(Long.parseLong(size.trim().split("\\s")[1]));
 
         // 最后提交时间
         // git log master --date=raw -1
-        List<String> list = ShellUtil.exec("git --git-dir", projectRoot + "/" + namespace + "/" + projectPath + ".git log", branch, "--date=raw -1");
+        List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + branch + " --date=raw -1");
         if (!list.isEmpty()) {
             Map<String, Object> lastCommit = new HashMap<>(8);
             lastCommit.put("commitId", list.get(0).trim().split("\\s+")[1]);
@@ -200,17 +200,17 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
         // 提交次数
         // git log master --oneline | wc -l
-        String commitNums = ShellUtil.execSimple("git --git-dir", projectRoot + "/" + namespace + "/" + projectPath + ".git log", branch, "--oneline | wc -l");
+        String commitNums = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + branch + " --oneline | wc -l");
         projectInfo.setCommitNums(Integer.parseInt(commitNums.trim()));
 
         // 分支
         // git branch
-        List<String> branches = ShellUtil.exec("git --git-dir", projectRoot + "/" + namespace + "/" + projectPath + ".git branch");
+        List<String> branches = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git branch");
         projectInfo.setBranches(formatBranches(branches));
 
         // 标签
         // git tag
-        List<String> tags = ShellUtil.exec("git --git-dir", projectRoot + "/" + namespace + "/" + projectPath + ".git tag");
+        List<String> tags = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git tag");
         projectInfo.setTags(tags);
 
         return projectInfo;
@@ -222,7 +222,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         List<TreeInfo> treeInfos = new ArrayList<>();
         Project project = findProjectByNamespaceAndPath(namespace, projectPath);
         // git ls-tree -l master HEAD service/2.txt
-        List<String> list = ShellUtil.exec("git --git-dir", projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l", branch, "HEAD", fullPath);
+        List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l", branch, "HEAD", fullPath);
         for (String line : list) {
             // line look like: 100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	service/2.txt
             String[] arr = line.split("\\s+");
@@ -236,7 +236,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
             // last commit
             // git log dev-kyg -1 -- service/2.txt
-            List<String> lastCommit = ShellUtil.exec("git --git-dir", projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log", branch, "--date=raw -1 --", treeInfo.getFullName());
+            List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log " + branch + " --date=raw -1 -- " + treeInfo.getFullName());
             if (!lastCommit.isEmpty()) {
                 Map<String, Object> map = new HashMap<>(8);
                 map.put("commitId", lastCommit.get(0).trim().split("\\s+")[1]);
@@ -258,7 +258,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         Project project = findProjectByNamespaceAndPath(namespace, projectPath);
 
         // 文件属性
-        String line = ShellUtil.execSimple("git --git-dir", projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l", branch, "HEAD", fullPath);
+        String line = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l ", branch, "HEAD", fullPath);
         // line look like: 100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	service/2.txt
         String[] arr = line.split("\\s+");
         blobInfo.setIsh(arr[2]);
@@ -269,7 +269,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         // 只读取常见类型的文件内容，并且文件要小于2M，否则就去下载吧
         if ("MD,TXT,XML,YML,PROPERTIES,GITIGNORE,SQL,SH,JAVA,JS,CSS,JSON,HTML".contains(ext)
                 && blobInfo.getSize() < 2097152) {
-            String content = ShellUtil.execSimple("git --git-dir", projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show", branch + ":" + fullPath);
+            String content = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show ", branch + ":" + fullPath);
             blobInfo.setContent(content);
         }
 
@@ -283,7 +283,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @MethodLog
     public Map<String, Object> getLastCommit(String namespace, String projectPath, String branch, String fullPath) throws Exception {
         // git log dev-kyg --date=raw -1 -- service/2.txt
-        List<String> lastCommit = ShellUtil.exec("git --git-dir", projectRoot + "/" + namespace + "/" + projectPath + ".git log", branch, "--date=raw -1 --", fullPath);
+        List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + branch + " --date=raw -1 --", fullPath);
         if (!lastCommit.isEmpty()) {
             Map<String, Object> map = new HashMap<>(4);
             map.put("commitId", lastCommit.get(0).trim().split("\\s+")[1]);
@@ -299,7 +299,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     public void newBranch(String namespace, String projectPath, String branchName, String createFrom) throws Exception {
-        String msg = ShellUtil.execSimple("git --git-dir", projectRoot + "/" + namespace + "/" + projectPath + ".git branch", branchName, createFrom);
+        String msg = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git branch", branchName, createFrom);
         if (StringUtils.isNotEmpty(msg)) {
             throw new RuntimeException(msg);
         }
@@ -308,7 +308,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     public void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception {
-        String msg = ShellUtil.execSimple("sh " + binPath + "/new_dir.sh", projectRoot, namespace, projectPath, branchName, parentPath, directoryName, commitMessage, user.getUsername(), user.getEmail());
+        String msg = ShellUtil.execSimple("sh " + binPath + "/new_dir.sh", projectRoot, namespace, projectPath, branchName, commitMessage, user.getUsername(), user.getEmail());
         log.info(msg);
     }
 
