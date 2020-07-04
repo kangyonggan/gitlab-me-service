@@ -1,5 +1,7 @@
 package com.kangyonggan.gitlab.util;
 
+import lombok.extern.log4j.Log4j2;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,20 +13,10 @@ import java.util.List;
 /**
  * @author kyg
  */
+@Log4j2
 public final class ShellUtil {
 
     private ShellUtil() {
-    }
-
-    /**
-     * 执行shell命令
-     *
-     * @param command
-     * @return
-     * @throws Exception
-     */
-    public static String execSimple(String command) throws Exception {
-        return new String(execByte(command), StandardCharsets.UTF_8);
     }
 
     /**
@@ -36,7 +28,7 @@ public final class ShellUtil {
      * @throws Exception
      */
     public static String execSimple(String command, String... args) throws Exception {
-        return new String(execByte(command + buildArgs(args)), StandardCharsets.UTF_8);
+        return new String(execByte(command, args), StandardCharsets.UTF_8);
     }
 
     /**
@@ -70,7 +62,7 @@ public final class ShellUtil {
         byte[] buff = new byte[2048];
         int len;
         try {
-            input = execStream(command + buildArgs(args));
+            input = execStream(command, args);
             while ((len = input.read(buff)) != -1) {
                 out.write(buff, 0, len);
             }
@@ -93,7 +85,9 @@ public final class ShellUtil {
      * @throws Exception
      */
     public static InputStream execStream(String command, String... args) throws Exception {
-        Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command + buildArgs(args)}, null, null);
+        command += buildArgs(args);
+        log.info("exec shell:{}", command);
+        Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
         return process.getInputStream();
     }
 
@@ -111,7 +105,9 @@ public final class ShellUtil {
         InputStreamReader input = null;
 
         try {
-            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command + buildArgs(args)}, null, null);
+            command += buildArgs(args);
+            log.info("exec shell:{}", command);
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, null);
             input = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
             reader = new LineNumberReader(input);
             String line;
