@@ -20,8 +20,8 @@ then
   mkdir -p "${6}"
 fi
 
-touch .gitkeep
+touch "${6}/.gitkeep"
 
 git add .
-git commit -m "${7}" --author='${8} <${9}>'
+git commit -m "${7}" --author=''${8} <${9}>''
 git push
