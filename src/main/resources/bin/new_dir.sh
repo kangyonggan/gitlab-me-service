@@ -19,11 +19,10 @@ pwd
 if [ ! -d $6 ]
 then
 	 mkdir -p "${6}"
+	 touch "${6}/.gitkeep"
+	 git add .
+	 git commit -m "${7}" --author="${8} <${9}>"
+	 git push
 fi
 
-touch "${6}/.gitkeep"
-
-git add .
-git commit -m "${7}" --author="${8} <${9}>"
-git push
 
