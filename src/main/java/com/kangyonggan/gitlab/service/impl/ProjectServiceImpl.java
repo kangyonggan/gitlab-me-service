@@ -8,13 +8,13 @@ import com.kangyonggan.gitlab.dto.ProjectRequest;
 import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.model.Project;
 import com.kangyonggan.gitlab.model.ProjectUser;
-import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.ProjectUserService;
 import com.kangyonggan.gitlab.util.Encodes;
 import com.kangyonggan.gitlab.util.ShellUtil;
 import com.kangyonggan.gitlab.util.StringUtil;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +33,7 @@ import java.util.Map;
  * @author kyg
  */
 @Service
+@Log4j2
 public class ProjectServiceImpl extends BaseService<Project> implements ProjectService {
 
     @Autowired
@@ -299,16 +300,6 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @MethodLog
     public void newBranch(String namespace, String projectPath, String branchName, String createFrom) throws Exception {
         String msg = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git branch " + branchName + " " + createFrom);
-        if (StringUtils.isNotEmpty(msg)) {
-            throw new RuntimeException(msg);
-        }
-    }
-
-    @Override
-    @MethodLog
-    public void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception {
-        String msg = ShellUtil.execSimple("sh " + binPath + "/new_dir.sh " + projectRoot + " " + namespace + " " + projectPath + " " + branchName + " "
-                + parentPath + " " + directoryName + " " + commitMessage + " " + user.getUsername() + " " + user.getEmail());
         if (StringUtils.isNotEmpty(msg)) {
             throw new RuntimeException(msg);
         }
