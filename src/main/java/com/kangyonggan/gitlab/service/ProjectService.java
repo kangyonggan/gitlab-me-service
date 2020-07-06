@@ -169,4 +169,19 @@ public interface ProjectService {
      * @throws Exception
      */
     void newFile(String namespace, String projectPath, String branchName, String parentPath, String fileName, String content, String contentType, String commitMessage, User user) throws Exception;
+
+    /**
+     * 上传文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param parentPath
+     * @param fileName
+     * @param sourceFile
+     * @param commitMessage
+     * @param user
+     * @throws Exception
+     */
+    void uploadFile(String namespace, String projectPath, String branchName, String parentPath, String fileName, String sourceFile, String commitMessage, User user) throws Exception;
 }

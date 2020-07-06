@@ -305,6 +305,12 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     public void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception {
+        if (directoryName.startsWith("/")) {
+            directoryName = directoryName.substring(1);
+        }
+        if (directoryName.endsWith("/")) {
+            directoryName = directoryName.substring(0, directoryName.lastIndexOf("/"));
+        }
         ShellUtil.execSimple("sh " + binPath + "/new_dir.sh", projectRoot, namespace, projectPath, branchName,
                 parentPath, directoryName, commitMessage, user.getUsername(), user.getEmail());
     }
@@ -327,6 +333,13 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         String fileDir = fileName.contains("/") ? FilenameUtils.getFullPath(fileName) : "";
         ShellUtil.execSimple("sh " + binPath + "/new_file.sh", projectRoot, namespace, projectPath, branchName,
                 parentPath, fileDir, FilenameUtils.getName(fileName), content, commitMessage, user.getUsername(), user.getEmail());
+    }
+
+    @Override
+    @MethodLog
+    public void uploadFile(String namespace, String projectPath, String branchName, String parentPath, String fileName, String sourceFile, String commitMessage, User user) throws Exception {
+        ShellUtil.execSimple("sh " + binPath + "/upload_file.sh", projectRoot, namespace, projectPath, branchName,
+                parentPath, fileName, sourceFile, commitMessage, user.getUsername(), user.getEmail());
     }
 
     private List<String> formatBranches(List<String> branches) {

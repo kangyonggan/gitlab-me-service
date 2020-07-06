@@ -33,6 +33,10 @@ public final class FileUpload {
     public static void upload(String dir, String fileName, MultipartFile file) throws FileUploadException {
         if (file.getSize() != 0) {
             try {
+                File fileDir = new File(dir);
+                if (!fileDir.exists()) {
+                    fileDir.mkdirs();
+                }
                 File desc = getAbsolutePath(dir + fileName + "." + FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase());
                 file.transferTo(desc);
             } catch (Exception e) {
