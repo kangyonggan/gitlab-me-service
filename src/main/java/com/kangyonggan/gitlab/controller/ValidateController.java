@@ -7,7 +7,10 @@ import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.GroupService;
 import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.UserService;
+import com.kangyonggan.gitlab.util.ShellUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("validate")
 public class ValidateController extends BaseController {
+
+    @Value("${gitlab.project-root}")
+    private String projectRoot;
 
     @Autowired
     private UserService userService;
@@ -157,6 +163,30 @@ public class ValidateController extends BaseController {
 
         if (!userService.existsEmail(email)) {
             response.failure("The email not exists");
+        }
+
+        return response;
+    }
+
+    /**
+     * 校验文件是否不存在
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branch
+     * @param fullPath
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("fileName")
+    public Response fileName(@RequestParam String namespace, @RequestParam String projectPath,
+                             @RequestParam String branch, @RequestParam String fullPath) throws Exception {
+        Response response = successResponse();
+
+        // git ls-tree master HEAD service/2.txt
+        String result = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git ls-tree " + branch + " HEAD " + fullPath);
+        if (StringUtils.isNotEmpty(result)) {
+            response.failure("This file already exists");
         }
 
         return response;

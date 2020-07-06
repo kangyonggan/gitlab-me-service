@@ -147,4 +147,27 @@ public class ProjectsDetailsController extends BaseController {
         return successResponse();
     }
 
+    /**
+     * 创建文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param parentPath
+     * @param fileName
+     * @param content
+     * @param contentType
+     * @param commitMessage
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/new")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response newFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
+                          @RequestParam String parentPath, @RequestParam String fileName, @RequestParam String content,
+                            @RequestParam String contentType, @RequestParam String commitMessage) throws Exception {
+        projectService.newFile(namespace, projectPath, branchName, parentPath, fileName, content, contentType, commitMessage, currentUser());
+        return successResponse();
+    }
+
 }

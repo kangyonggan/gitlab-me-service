@@ -1,7 +1,11 @@
 read old_value new_value ref_name
 branchName=${ref_name:11}
 
-url="http://localhost:8080/access?namespace=$NAMESPACE&projectPath=$PROJECT_NAME&username=$REMOTE_USER&branchName=$branchName"
-checkAccess=$(curl ${url})
-
-exit $checkAccess
+if [ "${NAMESPACE}" ]
+then
+    url="http://localhost:8080/access?namespace=$NAMESPACE&projectPath=$PROJECT_NAME&username=$REMOTE_USER&branchName=$branchName"
+    checkAccess=$(curl ${url})
+    exit $checkAccess
+else
+    exit 0
+fi

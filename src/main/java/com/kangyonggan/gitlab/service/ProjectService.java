@@ -154,4 +154,19 @@ public interface ProjectService {
      */
     void newDir(String namespace, String projectPath, String branchName, String parentPath, String directoryName, String commitMessage, User user) throws Exception;
 
+    /**
+     * 创建文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param parentPath
+     * @param fileName
+     * @param content
+     * @param contentType
+     * @param commitMessage
+     * @param user
+     * @throws Exception
+     */
+    void newFile(String namespace, String projectPath, String branchName, String parentPath, String fileName, String content, String contentType, String commitMessage, User user) throws Exception;
 }
