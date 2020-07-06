@@ -222,18 +222,23 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         List<String> list = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l", branch, "HEAD", fullPath);
         for (String line : list) {
             // line look like: 100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	service/2.txt
-            String[] arr = line.split("\\s+");
+            line = line.substring(line.indexOf(" ") + 1);
             TreeInfo treeInfo = new TreeInfo();
-            treeInfo.setType(arr[1]);
-            treeInfo.setIsh(arr[2]);
-            if (!"-".equals(arr[3])) {
-                treeInfo.setSize(Long.parseLong(arr[3]));
+            treeInfo.setType(line.substring(0, line.indexOf(" ")));
+            line = line.substring(line.indexOf(" ") + 1);
+            // e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	1.txt
+            treeInfo.setIsh(line.substring(0, line.indexOf(" ")));
+            line = line.substring(line.indexOf(" ")).trim();
+            String size = line.substring(0, line.indexOf("\t"));
+            if (!"-".equals(size)) {
+                treeInfo.setSize(Long.parseLong(size));
             }
-            treeInfo.setFullName(Encodes.decodeOct(arr[4].replaceAll("\"", "")));
+            line = line.substring(line.indexOf("\t") + 1);
+            treeInfo.setFullName(Encodes.decodeOct(line.replaceAll("\"", "")));
 
             // last commit
             // git log dev-kyg -1 -- service/2.txt
-            List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log " + branch + " --date=raw -1 -- " + treeInfo.getFullName());
+            List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git log " + branch + " --date=raw -1 --", treeInfo.getFullName());
             if (!lastCommit.isEmpty()) {
                 Map<String, Object> map = new HashMap<>(8);
                 map.put("commitId", lastCommit.get(0).trim().split("\\s+")[1]);
