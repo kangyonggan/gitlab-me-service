@@ -12,6 +12,7 @@ import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.util.ShellUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -55,11 +56,25 @@ public class ProjectsDetailsController extends BaseController {
     @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/tree")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response tree(@PathVariable String namespace, @PathVariable String projectPath,
-                         @RequestParam String branch, @RequestParam String fullPath) throws Exception {
+                         @RequestParam String branch, @RequestParam(required = false, defaultValue = "") String fullPath) throws Exception {
         Response response = successResponse();
         ProjectInfo project = projectService.findProjectInfo(namespace, projectPath, branch);
         List<TreeInfo> treeInfos = projectService.getProjectTree(namespace, projectPath, branch, fullPath);
         Map<String, Object> lastCommit = projectService.getLastCommit(namespace, projectPath, branch, fullPath);
+
+        // README.md
+        if ("master".equals(branch) && StringUtils.isEmpty(fullPath)) {
+            String readmeName = "";
+            for (TreeInfo treeInfo : treeInfos) {
+                if ("README.MD".equals(treeInfo.getFullName().toUpperCase())) {
+                    readmeName = treeInfo.getFullName();
+                    break;
+                }
+            }
+
+            BlobInfo readme = projectService.getProjectBlob(namespace, projectPath, branch, readmeName);
+            response.put("readme", readme);
+        }
 
         response.put("project", project);
         response.put("treeInfos", treeInfos);
@@ -103,7 +118,8 @@ public class ProjectsDetailsController extends BaseController {
     public void raw(@PathVariable String namespace, @PathVariable String projectPath,
                     @RequestParam String branch, @RequestParam String fullPath) throws Exception {
         HttpServletResponse response = ParamsInterceptor.getResponse();
-        response.setHeader("content-disposition", "attachement;filename=" + URLEncoder.encode(FilenameUtils.getName(fullPath), "UTF-8"));
+        String encodeName = URLEncoder.encode(FilenameUtils.getName(fullPath), "UTF-8");
+        response.setHeader("content-disposition", "attachement;filename=" + encodeName.replaceAll("\\+", "%20"));
 
         String cmd = "git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git show " + branch + ":" + fullPath;
         try (InputStream in = ShellUtil.execStream(cmd);
@@ -228,7 +244,7 @@ public class ProjectsDetailsController extends BaseController {
     @PutMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/replace")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response replaceFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
-                               @RequestParam String fullPath, @RequestParam String url, @RequestParam String commitMessage) throws Exception {
+                                @RequestParam String fullPath, @RequestParam String url, @RequestParam String commitMessage) throws Exception {
         projectService.replaceFile(namespace, projectPath, branchName, fullPath, fileUploadPath + url.substring(7), commitMessage, currentUser());
         return successResponse();
     }
@@ -251,8 +267,8 @@ public class ProjectsDetailsController extends BaseController {
     @PutMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/file")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response updateFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
-                            @RequestParam String parentPath, @RequestParam String fileName, @RequestParam String oldFileName, @RequestParam String content,
-                            @RequestParam String contentType, @RequestParam String commitMessage) throws Exception {
+                               @RequestParam String parentPath, @RequestParam String fileName, @RequestParam String oldFileName, @RequestParam String content,
+                               @RequestParam String contentType, @RequestParam String commitMessage) throws Exception {
         projectService.updateFile(namespace, projectPath, branchName, parentPath, fileName, oldFileName, content, contentType, commitMessage, currentUser());
         return successResponse();
     }

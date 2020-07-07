@@ -224,6 +224,9 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     public List<TreeInfo> getProjectTree(String namespace, String projectPath, String branch, String fullPath) throws Exception {
+        if (StringUtils.isEmpty(fullPath)) {
+            fullPath = "./";
+        }
         List<TreeInfo> treeInfos = new ArrayList<>();
         Project project = findProjectByNamespaceAndPath(namespace, projectPath);
         // git ls-tree -l master HEAD service/2.txt
@@ -270,6 +273,9 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         // 文件属性
         String line = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git ls-tree -l ", branch, "HEAD", fullPath);
         // line look like: 100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	service/2.txt
+        if (StringUtils.isEmpty(line)) {
+            return null;
+        }
         String[] arr = line.split("\\s+");
         blobInfo.setIsh(arr[2]);
         blobInfo.setSize(Long.parseLong(arr[3]));
@@ -292,6 +298,9 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @Override
     @MethodLog
     public Map<String, Object> getLastCommit(String namespace, String projectPath, String branch, String fullPath) throws Exception {
+        if (StringUtils.isEmpty(fullPath)) {
+            fullPath = "./";
+        }
         // git log dev-kyg --date=raw -1 -- service/2.txt
         List<String> lastCommit = ShellUtil.exec("git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git log " + branch + " --date=raw -1 --", fullPath);
         if (!lastCommit.isEmpty()) {
