@@ -9,7 +9,6 @@ import com.kangyonggan.gitlab.dto.Response;
 import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.interceptor.ParamsInterceptor;
 import com.kangyonggan.gitlab.service.ProjectService;
-import com.kangyonggan.gitlab.service.RedisService;
 import com.kangyonggan.gitlab.util.ShellUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,9 +35,6 @@ public class ProjectsDetailsController extends BaseController {
 
     @Value("${gitlab.project-root}")
     private String projectRoot;
-
-    @Autowired
-    private RedisService redisService;
 
     /**
      * 文件根路径
@@ -193,7 +189,7 @@ public class ProjectsDetailsController extends BaseController {
      * @return
      * @throws Exception
      */
-    @PostMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/upload")
+    @PostMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/file")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response uploadFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
                                @RequestParam String parentPath, @RequestParam String fileName, @RequestParam String url, @RequestParam String commitMessage) throws Exception {
@@ -202,7 +198,7 @@ public class ProjectsDetailsController extends BaseController {
     }
 
     /**
-     * 上传文件
+     * 删除文件
      *
      * @param namespace
      * @param projectPath
@@ -217,6 +213,26 @@ public class ProjectsDetailsController extends BaseController {
     public Response deleteFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
                                @RequestParam String fullPath, @RequestParam String commitMessage) throws Exception {
         projectService.deleteFile(namespace, projectPath, branchName, fullPath, commitMessage, currentUser());
+        return successResponse();
+    }
+
+    /**
+     * 替换文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param fullPath
+     * @param url
+     * @param commitMessage
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/file")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response replaceFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
+                               @RequestParam String fullPath, @RequestParam String url, @RequestParam String commitMessage) throws Exception {
+        projectService.replaceFile(namespace, projectPath, branchName, fullPath, fileUploadPath + url.substring(7), commitMessage, currentUser());
         return successResponse();
     }
 

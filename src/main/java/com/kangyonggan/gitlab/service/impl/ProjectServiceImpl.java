@@ -13,6 +13,7 @@ import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.ProjectUserService;
 import com.kangyonggan.gitlab.util.Encodes;
+import com.kangyonggan.gitlab.util.FileUtil;
 import com.kangyonggan.gitlab.util.ShellUtil;
 import com.kangyonggan.gitlab.util.StringUtil;
 import lombok.extern.log4j.Log4j2;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -266,13 +268,15 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         blobInfo.setIsh(arr[2]);
         blobInfo.setSize(Long.parseLong(arr[3]));
 
-        // 文件内容
-        String ext = FilenameUtils.getExtension(fullPath).toUpperCase();
-        // 只读取常见类型的文件内容，并且文件要小于2M，否则就去下载吧
-        if ("MD,TXT,XML,YML,PROPERTIES,GITIGNORE,SQL,SH,JAVA,JS,CSS,JSON,HTML".contains(ext)
-                && blobInfo.getSize() < 2097152) {
-            String content = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show ", branch + ":" + fullPath);
-            blobInfo.setContent(content);
+        // 文件内容。只读取常见类型的文件内容，并且文件要小于2M，否则就去下载吧
+        if (blobInfo.getSize() < 2097152) {
+            String cmd = "git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git show " + branch + ":" + fullPath;
+            try (InputStream in = ShellUtil.execStream(cmd)) {
+                if (FileUtil.getType(in) == null) {
+                    String content = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show ", branch + ":" + fullPath);
+                    blobInfo.setContent(content);
+                }
+            }
         }
 
         // last commit
@@ -351,6 +355,13 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     @MethodLog
     public void deleteFile(String namespace, String projectPath, String branchName, String fullPath, String commitMessage, User user) throws Exception {
         ShellUtil.execSimple("sh " + binPath + "/delete_file.sh", projectRoot, namespace, projectPath, branchName, fullPath, commitMessage, user.getUsername(), user.getEmail());
+    }
+
+    @Override
+    @MethodLog
+    public void replaceFile(String namespace, String projectPath, String branchName, String fullPath, String sourceFile, String commitMessage, User user) throws Exception {
+        ShellUtil.execSimple("sh " + binPath + "/replace_file.sh", projectRoot, namespace, projectPath, branchName,
+                fullPath, sourceFile, commitMessage, user.getUsername(), user.getEmail());
     }
 
     private List<String> formatBranches(List<String> branches) {

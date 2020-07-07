@@ -197,4 +197,18 @@ public interface ProjectService {
      * @throws Exception
      */
     void deleteFile(String namespace, String projectPath, String branchName, String fullPath, String commitMessage, User user) throws Exception;
+
+    /**
+     * 替换文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param fullPath
+     * @param sourceFile
+     * @param commitMessage
+     * @param user
+     * @throws Exception
+     */
+    void replaceFile(String namespace, String projectPath, String branchName, String fullPath, String sourceFile, String commitMessage, User user) throws Exception;
 }
