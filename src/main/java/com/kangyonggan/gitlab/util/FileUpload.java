@@ -4,10 +4,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * 文件上传工具类
@@ -42,6 +39,25 @@ public final class FileUpload {
             } catch (Exception e) {
                 throw new FileUploadException("File Upload Exception", e);
             }
+        }
+    }
+
+    /**
+     * 写文件
+     *
+     * @param dir      文件父目录
+     * @param fileName 文件名
+     * @param content  内容
+     * @throws Exception 可能会抛出的异常
+     */
+    public static void writeFile(String dir, String fileName, String content) throws Exception {
+        File fileDir = new File(dir);
+        if (!fileDir.exists()) {
+            fileDir.mkdirs();
+        }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(dir + fileName))) {
+            writer.write(content);
+            writer.flush();
         }
     }
 

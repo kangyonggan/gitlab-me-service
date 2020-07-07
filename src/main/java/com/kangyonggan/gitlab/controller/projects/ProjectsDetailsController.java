@@ -55,8 +55,7 @@ public class ProjectsDetailsController extends BaseController {
     @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/tree")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response tree(@PathVariable String namespace, @PathVariable String projectPath,
-                         @RequestParam(required = false, defaultValue = "master") String branch,
-                         @RequestParam(required = false, defaultValue = "./") String fullPath) throws Exception {
+                         @RequestParam String branch, @RequestParam String fullPath) throws Exception {
         Response response = successResponse();
         ProjectInfo project = projectService.findProjectInfo(namespace, projectPath, branch);
         List<TreeInfo> treeInfos = projectService.getProjectTree(namespace, projectPath, branch, fullPath);
@@ -81,8 +80,7 @@ public class ProjectsDetailsController extends BaseController {
     @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/blob")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response blob(@PathVariable String namespace, @PathVariable String projectPath,
-                         @RequestParam(required = false, defaultValue = "master") String branch,
-                         @RequestParam String fullPath) throws Exception {
+                         @RequestParam String branch, @RequestParam String fullPath) throws Exception {
         Response response = successResponse();
         ProjectInfo project = projectService.findProjectInfo(namespace, projectPath, branch);
         BlobInfo blobInfo = projectService.getProjectBlob(namespace, projectPath, branch, fullPath);
@@ -103,8 +101,7 @@ public class ProjectsDetailsController extends BaseController {
      */
     @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/raw")
     public void raw(@PathVariable String namespace, @PathVariable String projectPath,
-                    @RequestParam(required = false, defaultValue = "master") String branch,
-                    @RequestParam String fullPath) throws Exception {
+                    @RequestParam String branch, @RequestParam String fullPath) throws Exception {
         HttpServletResponse response = ParamsInterceptor.getResponse();
         response.setHeader("content-disposition", "attachement;filename=" + URLEncoder.encode(FilenameUtils.getName(fullPath), "UTF-8"));
 
@@ -228,11 +225,35 @@ public class ProjectsDetailsController extends BaseController {
      * @return
      * @throws Exception
      */
-    @PutMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/file")
+    @PutMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/replace")
     @PermissionAccessLevel(AccessLevel.Admin)
     public Response replaceFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
                                @RequestParam String fullPath, @RequestParam String url, @RequestParam String commitMessage) throws Exception {
         projectService.replaceFile(namespace, projectPath, branchName, fullPath, fileUploadPath + url.substring(7), commitMessage, currentUser());
+        return successResponse();
+    }
+
+    /**
+     * 更新文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param parentPath
+     * @param fileName
+     * @param oldFileName
+     * @param content
+     * @param contentType
+     * @param commitMessage
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/file")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response updateFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
+                            @RequestParam String parentPath, @RequestParam String fileName, @RequestParam String oldFileName, @RequestParam String content,
+                            @RequestParam String contentType, @RequestParam String commitMessage) throws Exception {
+        projectService.updateFile(namespace, projectPath, branchName, parentPath, fileName, oldFileName, content, contentType, commitMessage, currentUser());
         return successResponse();
     }
 

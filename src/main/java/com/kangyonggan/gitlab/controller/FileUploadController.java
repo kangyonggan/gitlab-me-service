@@ -29,7 +29,6 @@ public class FileUploadController extends BaseController {
      * 文件跟路径
      */
     @Value("${app.file-upload}")
-    @Getter
     private String fileUploadPath;
 
     /**

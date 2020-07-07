@@ -12,10 +12,8 @@ import com.kangyonggan.gitlab.model.User;
 import com.kangyonggan.gitlab.service.BaseService;
 import com.kangyonggan.gitlab.service.ProjectService;
 import com.kangyonggan.gitlab.service.ProjectUserService;
-import com.kangyonggan.gitlab.util.Encodes;
-import com.kangyonggan.gitlab.util.FileUtil;
-import com.kangyonggan.gitlab.util.ShellUtil;
-import com.kangyonggan.gitlab.util.StringUtil;
+import com.kangyonggan.gitlab.service.RedisService;
+import com.kangyonggan.gitlab.util.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -44,6 +41,15 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
 
     @Value("${gitlab.project-root}")
     private String projectRoot;
+
+    @Autowired
+    private RedisService redisService;
+
+    /**
+     * 文件跟路径
+     */
+    @Value("${app.file-upload}")
+    private String fileUploadPath;
 
     @Override
     public List<Project> searchProjects(ProjectRequest request) {
@@ -271,11 +277,9 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         // 文件内容。只读取常见类型的文件内容，并且文件要小于2M，否则就去下载吧
         if (blobInfo.getSize() < 2097152) {
             String cmd = "git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git show " + branch + ":" + fullPath;
-            try (InputStream in = ShellUtil.execStream(cmd)) {
-                if (FileUtil.getType(in) == null) {
-                    String content = ShellUtil.execSimple("git --git-dir " + projectRoot + "/" + project.getNamespace() + "/" + project.getProjectPath() + ".git show ", branch + ":" + fullPath);
-                    blobInfo.setContent(content);
-                }
+            byte[] bytes = ShellUtil.execByte(cmd);
+            if (FileUtil.getType(bytes) == null) {
+                blobInfo.setContent(new String(bytes));
             }
         }
 
@@ -339,9 +343,12 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
             content = new String(Base64.getDecoder().decode(content));
         }
 
+        String url = redisService.getIncrSerialNo() + "_" + FilenameUtils.getName(fileName);
+        FileUpload.writeFile(fileUploadPath + "default/", url, content);
+
         String fileDir = fileName.contains("/") ? FilenameUtils.getFullPath(fileName) : "";
         ShellUtil.execSimple("sh " + binPath + "/new_file.sh", projectRoot, namespace, projectPath, branchName,
-                parentPath, fileDir, FilenameUtils.getName(fileName), content, commitMessage, user.getUsername(), user.getEmail());
+                parentPath, fileDir, FilenameUtils.getName(fileName), fileUploadPath + "default/" + url, commitMessage, user.getUsername(), user.getEmail());
     }
 
     @Override
@@ -362,6 +369,29 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
     public void replaceFile(String namespace, String projectPath, String branchName, String fullPath, String sourceFile, String commitMessage, User user) throws Exception {
         ShellUtil.execSimple("sh " + binPath + "/replace_file.sh", projectRoot, namespace, projectPath, branchName,
                 fullPath, sourceFile, commitMessage, user.getUsername(), user.getEmail());
+    }
+
+    @Override
+    @MethodLog
+    public void updateFile(String namespace, String projectPath, String branchName, String parentPath, String fileName, String oldFileName, String content, String contentType, String commitMessage, User user) throws Exception {
+        if (fileName.startsWith("/")) {
+            fileName = fileName.substring(1);
+        }
+        if (fileName.endsWith("/")) {
+            fileName = fileName.substring(0, fileName.lastIndexOf("/"));
+        }
+
+        // base64
+        if ("base64".equals(contentType)) {
+            content = new String(Base64.getDecoder().decode(content));
+        }
+
+        String url = redisService.getIncrSerialNo() + "_" + FilenameUtils.getName(fileName);
+        FileUpload.writeFile(fileUploadPath + "default/", url, content);
+
+        String fileDir = fileName.contains("/") ? FilenameUtils.getFullPath(fileName) : "";
+        ShellUtil.execSimple("sh " + binPath + "/update_file.sh", projectRoot, namespace, projectPath, branchName,
+                parentPath, fileDir, FilenameUtils.getName(fileName), oldFileName, fileUploadPath + "default/" + url, commitMessage, user.getUsername(), user.getEmail());
     }
 
     private List<String> formatBranches(List<String> branches) {

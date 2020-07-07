@@ -211,4 +211,21 @@ public interface ProjectService {
      * @throws Exception
      */
     void replaceFile(String namespace, String projectPath, String branchName, String fullPath, String sourceFile, String commitMessage, User user) throws Exception;
+
+    /**
+     * 更新文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param parentPath
+     * @param fileName
+     * @param oldFileName
+     * @param content
+     * @param contentType
+     * @param commitMessage
+     * @param user
+     * @throws Exception
+     */
+    void updateFile(String namespace, String projectPath, String branchName, String parentPath, String fileName, String oldFileName, String content, String contentType, String commitMessage, User user) throws Exception;
 }

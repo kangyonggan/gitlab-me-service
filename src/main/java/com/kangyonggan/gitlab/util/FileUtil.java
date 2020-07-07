@@ -63,6 +63,21 @@ public class FileUtil {
     /**
      * 判断文件类型
      *
+     * @param bytes
+     * @return
+     * @throws IOException
+     */
+    public static FileType getType(byte[] bytes) {
+        byte[] b = new byte[28];
+        for (int i = 0; i < 28 && i < bytes.length; i++) {
+            b[i] = bytes[i];
+        }
+        return getFileType(bytes2hex(b));
+    }
+
+    /**
+     * 判断文件类型
+     *
      * @param filePath
      * @return
      * @throws IOException
