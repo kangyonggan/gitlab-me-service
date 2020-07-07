@@ -347,6 +347,12 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
                 parentPath, fileName, sourceFile, commitMessage, user.getUsername(), user.getEmail());
     }
 
+    @Override
+    @MethodLog
+    public void deleteFile(String namespace, String projectPath, String branchName, String fullPath, String commitMessage, User user) throws Exception {
+        ShellUtil.execSimple("sh " + binPath + "/delete_file.sh", projectRoot, namespace, projectPath, branchName, fullPath, commitMessage, user.getUsername(), user.getEmail());
+    }
+
     private List<String> formatBranches(List<String> branches) {
         for (int i = 0; i < branches.size(); i++) {
             String branch = branches.get(i).trim();

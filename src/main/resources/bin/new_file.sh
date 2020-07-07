@@ -15,6 +15,12 @@ cd "${1}/${2}/${3}.git/worktree"
 
 git pull
 git checkout "${4}"
+
+if [ ! -d $5 ]
+then
+  mkdir -p "${5}"
+fi
+
 cd "${5}"
 
 if [ $6 ]

@@ -194,9 +194,29 @@ public class ProjectsDetailsController extends BaseController {
      * @throws Exception
      */
     @PostMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/upload")
+    @PermissionAccessLevel(AccessLevel.Admin)
     public Response uploadFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
                                @RequestParam String parentPath, @RequestParam String fileName, @RequestParam String url, @RequestParam String commitMessage) throws Exception {
         projectService.uploadFile(namespace, projectPath, branchName, parentPath, fileName, fileUploadPath + url.substring(7), commitMessage, currentUser());
+        return successResponse();
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branchName
+     * @param fullPath
+     * @param commitMessage
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/file")
+    @PermissionAccessLevel(AccessLevel.Admin)
+    public Response deleteFile(@PathVariable String namespace, @PathVariable String projectPath, @RequestParam String branchName,
+                               @RequestParam String fullPath, @RequestParam String commitMessage) throws Exception {
+        projectService.deleteFile(namespace, projectPath, branchName, fullPath, commitMessage, currentUser());
         return successResponse();
     }
 

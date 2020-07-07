@@ -15,6 +15,11 @@ cd "${1}/${2}/${3}.git/worktree"
 git pull
 git checkout "${4}"
 
+if [ ! -d $5 ]
+then
+  mkdir -p "${5}"
+fi
+
 mv "${7}" "${5}/${6}"
 git add .
 git commit -m "${8}" --author="${9} <${10}>"
