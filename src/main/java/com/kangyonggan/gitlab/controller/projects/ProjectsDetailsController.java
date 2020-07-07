@@ -129,6 +129,26 @@ public class ProjectsDetailsController extends BaseController {
     }
 
     /**
+     * ZIP下载
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branch
+     * @throws Exception
+     */
+    @GetMapping("{namespace:[\\w]+}/{projectPath:[\\w]+}/{branch:[\\w]+}.zip")
+    public void zip(@PathVariable String namespace, @PathVariable String projectPath, @PathVariable String branch) throws Exception {
+        HttpServletResponse response = ParamsInterceptor.getResponse();
+        String encodeName = URLEncoder.encode(branch.replaceAll("/", "-") + ".zip", "UTF-8");
+        response.setHeader("content-disposition", "attachement;filename=" + encodeName.replaceAll("\\+", "%20"));
+
+        try (InputStream in = projectService.getZIPStream(namespace, projectPath, branch);
+             BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream())) {
+            IOUtils.copyLarge(in, out);
+        }
+    }
+
+    /**
      * 创建分支
      *
      * @param namespace

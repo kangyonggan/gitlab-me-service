@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -401,6 +403,14 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
         String fileDir = fileName.contains("/") ? FilenameUtils.getFullPath(fileName) : "";
         ShellUtil.execSimple("sh " + binPath + "/update_file.sh", projectRoot, namespace, projectPath, branchName,
                 parentPath, fileDir, FilenameUtils.getName(fileName), oldFileName, fileUploadPath + "default/" + url, commitMessage, user.getUsername(), user.getEmail());
+    }
+
+    @Override
+    @MethodLog
+    public InputStream getZIPStream(String namespace, String projectPath, String branch) throws Exception {
+        String url = redisService.getIncrSerialNo() + ".zip";
+        ShellUtil.exec("sh " + binPath + "/zip_project.sh", projectRoot, namespace, projectPath, branch, fileUploadPath + "default/" + url);
+        return new FileInputStream(fileUploadPath + "default/" + url);
     }
 
     private List<String> formatBranches(List<String> branches) {

@@ -7,6 +7,7 @@ import com.kangyonggan.gitlab.dto.TreeInfo;
 import com.kangyonggan.gitlab.model.Project;
 import com.kangyonggan.gitlab.model.User;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -228,4 +229,15 @@ public interface ProjectService {
      * @throws Exception
      */
     void updateFile(String namespace, String projectPath, String branchName, String parentPath, String fileName, String oldFileName, String content, String contentType, String commitMessage, User user) throws Exception;
+
+    /**
+     * 获取zip输入流
+     *
+     * @param namespace
+     * @param projectPath
+     * @param branch
+     * @return
+     * @throws Exception
+     */
+    InputStream getZIPStream(String namespace, String projectPath, String branch) throws Exception;
 }
