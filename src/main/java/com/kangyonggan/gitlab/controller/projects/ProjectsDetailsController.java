@@ -63,13 +63,11 @@ public class ProjectsDetailsController extends BaseController {
         Map<String, Object> lastCommit = projectService.getLastCommit(namespace, projectPath, branch, fullPath);
 
         // README.md
-        if ("master".equals(branch) && StringUtils.isEmpty(fullPath)) {
-            for (TreeInfo treeInfo : treeInfos) {
-                if ("README.MD".equals(treeInfo.getFullName().toUpperCase())) {
-                    BlobInfo readme = projectService.getProjectBlob(namespace, projectPath, branch, treeInfo.getFullName());
-                    response.put("readme", readme);
-                    break;
-                }
+        for (TreeInfo treeInfo : treeInfos) {
+            if ("README.MD".equals(FilenameUtils.getName(treeInfo.getFullName()).toUpperCase())) {
+                BlobInfo readme = projectService.getProjectBlob(namespace, projectPath, branch, treeInfo.getFullName());
+                response.put("readme", readme);
+                break;
             }
         }
 
