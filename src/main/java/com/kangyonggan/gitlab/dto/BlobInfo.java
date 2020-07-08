@@ -29,6 +29,11 @@ public class BlobInfo implements Serializable {
     private Long size;
 
     /**
+     * 内容是不是text
+     */
+    private boolean isText;
+
+    /**
      * 内容
      */
     private String content;

@@ -287,6 +287,7 @@ public class ProjectServiceImpl extends BaseService<Project> implements ProjectS
             String cmd = "git --git-dir " + projectRoot + "/" + namespace + "/" + projectPath + ".git show " + branch + ":" + fullPath;
             byte[] bytes = ShellUtil.execByte(cmd);
             if (FileUtil.getType(bytes) == null) {
+                blobInfo.setText(true);
                 blobInfo.setContent(new String(bytes));
             }
         }
