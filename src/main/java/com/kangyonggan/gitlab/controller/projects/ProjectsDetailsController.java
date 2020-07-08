@@ -64,16 +64,13 @@ public class ProjectsDetailsController extends BaseController {
 
         // README.md
         if ("master".equals(branch) && StringUtils.isEmpty(fullPath)) {
-            String readmeName = "";
             for (TreeInfo treeInfo : treeInfos) {
                 if ("README.MD".equals(treeInfo.getFullName().toUpperCase())) {
-                    readmeName = treeInfo.getFullName();
+                    BlobInfo readme = projectService.getProjectBlob(namespace, projectPath, branch, treeInfo.getFullName());
+                    response.put("readme", readme);
                     break;
                 }
             }
-
-            BlobInfo readme = projectService.getProjectBlob(namespace, projectPath, branch, readmeName);
-            response.put("readme", readme);
         }
 
         response.put("project", project);
